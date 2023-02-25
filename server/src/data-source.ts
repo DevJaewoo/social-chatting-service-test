@@ -9,6 +9,7 @@ import { Friend } from "./domain/friend/entities/friend.entity.js";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
+  driver: {}, // MySQL2 사용하도록 설정해줌
   host: process.env.DB_HOST || "localhost",
   port: 3306,
   username: process.env.DB_USERNAME || "root",
