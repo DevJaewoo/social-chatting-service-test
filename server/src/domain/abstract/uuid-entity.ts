@@ -1,5 +1,5 @@
 import { Generated, PrimaryColumn } from "typeorm";
-import { BaseTimeEntity } from "./base-time-entity";
+import { BaseTimeEntity } from "./base-time-entity.js";
 
 export abstract class UUIdEntity extends BaseTimeEntity {
   @PrimaryColumn({ type: "char", length: 36 })
