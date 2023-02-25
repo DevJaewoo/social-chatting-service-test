@@ -1,0 +1,5 @@
+{
+  "ignore": ["src/public/*", "client/*"],
+  "ext": "js, ts, json",
+  "exec": "ts-node-esm src/app.ts"
+}
