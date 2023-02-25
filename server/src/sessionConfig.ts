@@ -1,6 +1,7 @@
 import session, * as expressSession from "express-session";
 import expressMySqlSession from "express-mysql-session";
 import mysql2 from "mysql2/promise";
+import { RequestHandler } from "express";
 
 declare module "express-session" {
   export interface SessionData {
@@ -31,4 +32,14 @@ export const setupSession = () => {
   });
 
   return sessionMiddleware;
+};
+
+export const sessionCheckMiddleware: RequestHandler = (req, res, next) => {
+  if (!req.session.userId) {
+    return res.status(401).json({
+      status: "UNAUTHORIZED",
+      message: "Please Login",
+    });
+  }
+  next();
 };
