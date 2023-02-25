@@ -3,7 +3,7 @@ import { inject } from "inversify";
 import { UserService } from "./user.service.js";
 import { controller, httpPost } from "inversify-express-utils";
 import { TYPE } from "../../types.js";
-import { sessionCheckMiddleware } from "../../sessionConfig.js";
+import { sessionCheckMiddleware } from "./../../middlewares/sessionCheckMiddleware";
 
 interface SignupRequestDto {
   name: string;

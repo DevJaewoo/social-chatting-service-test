@@ -2,7 +2,7 @@ import "./dotenv.js";
 import express from "express";
 import path from "path";
 import { AppDataSource } from "./data-source.js";
-import { setupSession } from "./sessionConfig.js";
+import { sessionConfigMiddleware } from "./middlewares/sessionConfigMiddleware.js";
 import { Container } from "inversify";
 import { InversifyExpressServer } from "inversify-express-utils";
 import { bindComponents } from "./domain/bindConfig.js";
@@ -21,7 +21,7 @@ const initializeExpress = () => {
 
   server.setConfig((app) => {
     app.use(express.json());
-    app.use(setupSession());
+    app.use(sessionConfigMiddleware());
     app.use("/", express.static(path.join(__dirname, FRONTEND_DIR)));
   });
 
