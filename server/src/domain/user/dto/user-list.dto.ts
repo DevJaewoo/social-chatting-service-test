@@ -41,6 +41,7 @@ export class UserListItemResponseDto {
   @Exclude() private _nickname: string;
   @Exclude() private _friendStatus: TFriendStatus;
   @Exclude() private _followStatus: TFollowStatus;
+  @Exclude() private _createdAt: Date;
 
   private constructor() {}
 
@@ -64,6 +65,10 @@ export class UserListItemResponseDto {
     return this._followStatus;
   }
 
+  @Expose() public get createdAt() {
+    return this._createdAt;
+  }
+
   public static from(
     user: User,
     friendStatus: TFriendStatus,
@@ -74,6 +79,7 @@ export class UserListItemResponseDto {
     userListItemDto._id = user.id;
     userListItemDto._name = user.name;
     userListItemDto._nickname = user.nickname;
+    userListItemDto._createdAt = user.createdAt;
 
     userListItemDto._friendStatus = friendStatus;
     userListItemDto._followStatus = followStatus;
