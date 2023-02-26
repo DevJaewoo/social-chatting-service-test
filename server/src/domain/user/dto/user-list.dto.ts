@@ -19,7 +19,6 @@ export class UserListResponseDto {
   public static from(currentUser: User, userList: User[]) {
     const userListDto = new UserListResponseDto();
 
-    console.log(currentUser.friends);
     userListDto._userList = userList.map((user) => {
       // TODO: O(n)으로 개선
       const friendStatus =
