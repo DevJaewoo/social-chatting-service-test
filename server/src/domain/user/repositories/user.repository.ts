@@ -4,6 +4,7 @@ import { User } from "../entities/user.entity.js";
 export const UserRepository = AppDataSource.getRepository(User).extend({
   async existsByName(name: string) {
     return this.createQueryBuilder("user")
+      .withDeleted()
       .where("user.name = :name", { name })
       .getExists();
   },
