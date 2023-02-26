@@ -51,4 +51,28 @@ export class UserController {
     );
     return res.status(StatusCodes.OK).send(instanceToPlain(userList));
   }
+
+  @httpGet("/:userId/friends", sessionCheckMiddleware)
+  public async getUserFriends(req: Request, res: Response) {
+    const friendList = await this.userService.getUserFriends(
+      parseInt(req.params.userId) ?? 0
+    );
+    return res.status(StatusCodes.OK).send(instanceToPlain(friendList));
+  }
+
+  @httpGet("/:userId/followers", sessionCheckMiddleware)
+  public async getUserFollowers(req: Request, res: Response) {
+    const followerList = await this.userService.getUserFollowers(
+      parseInt(req.params.userId) ?? 0
+    );
+    return res.status(StatusCodes.OK).send(instanceToPlain(followerList));
+  }
+
+  @httpGet("/:userId/following", sessionCheckMiddleware)
+  public async getUserFollowees(req: Request, res: Response) {
+    const followerList = await this.userService.getUserFollowees(
+      parseInt(req.params.userId) ?? 0
+    );
+    return res.status(StatusCodes.OK).send(instanceToPlain(followerList));
+  }
 }
