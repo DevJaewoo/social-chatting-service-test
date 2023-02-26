@@ -9,11 +9,15 @@ import {
   httpPost,
   httpPatch,
   httpPut,
+  request,
+  response,
+  requestParam,
 } from "inversify-express-utils";
 import { TYPE } from "../types.js";
 import { sessionCheckMiddleware } from "../../global/middlewares/sessionCheckMiddleware.js";
 import { validateBodyMiddleware } from "../../global/middlewares/validateBodyMiddleware.js";
 import { FriendService } from "./friend.service.js";
+import { AcceptFriendRequestDto } from "./dto/accept-friend.dto.js";
 
 @controller("/api/friends")
 export class FriendController {
@@ -54,5 +58,19 @@ export class FriendController {
       req.session.userId ?? 0
     );
     return res.status(StatusCodes.OK).send(instanceToPlain(requestList));
+  }
+
+  @httpPatch("/requests/:userId", sessionCheckMiddleware)
+  public async acceptFriend(
+    @request() req: Request<{}, {}, AcceptFriendRequestDto>,
+    @response() res: Response,
+    @requestParam("userId") userId: number
+  ) {
+    const result = await this.friendService.acceptFriend(
+      req.session.userId ?? 0,
+      userId,
+      req.body
+    );
+    return res.status(StatusCodes.OK).send(instanceToPlain(result));
   }
 }

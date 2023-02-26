@@ -13,8 +13,9 @@ export class AddRequestListResponseDto {
   public static from(addRequestList: Friend[]) {
     const userListDto = new AddRequestListResponseDto();
 
+    console.log(addRequestList);
     userListDto._addRequestList = addRequestList
-      .filter((f) => f.friend)
+      .filter((f) => f.user)
       .map((friend) => {
         // TODO: O(n)으로 개선
         return AddRequestListItemResponseDto.from(friend);
@@ -51,10 +52,10 @@ export class AddRequestListItemResponseDto {
   public static from(friend: Friend): AddRequestListItemResponseDto {
     const friendsDto = new AddRequestListItemResponseDto();
 
-    friendsDto._id = friend.friend.id;
-    friendsDto._name = friend.friend.name;
-    friendsDto._nickname = friend.friend.nickname;
-    friendsDto._createdAt = friend.friend.createdAt;
+    friendsDto._id = friend.user.id;
+    friendsDto._name = friend.user.name;
+    friendsDto._nickname = friend.user.nickname;
+    friendsDto._createdAt = friend.user.createdAt;
 
     return friendsDto;
   }

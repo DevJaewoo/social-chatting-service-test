@@ -15,7 +15,7 @@ export const FriendRepository = AppDataSource.getRepository(Friend).extend({
 
   async findAllRequestsByUserId(id: number) {
     return this.createQueryBuilder("friend")
-      .leftJoinAndSelect("friend.friend", "friendUser")
+      .leftJoinAndSelect("friend.user", "user")
       .where("friend.friendId = :id", { id })
       .andWhere("friend.friendStatus = :status", {
         status: FriendStatus.REQUESTED,

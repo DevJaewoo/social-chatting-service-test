@@ -8,6 +8,10 @@ import { FriendStatus } from "../../global/constants.js";
 import { FriendErrorCode } from "./friend.error.js";
 import { Friend } from "./entities/friend.entity.js";
 import { AddRequestListResponseDto } from "./dto/add-request-list.dto.js";
+import {
+  AcceptFriendRequestDto,
+  AcceptFriendResponseDto,
+} from "./dto/accept-friend.dto.js";
 
 @injectable()
 export class FriendService {
@@ -102,5 +106,67 @@ export class FriendService {
       currentUserId
     );
     return AddRequestListResponseDto.from(friends);
+  }
+
+  async acceptFriend(
+    currentUserId: number,
+    friendUserId: number,
+    request: AcceptFriendRequestDto
+  ): Promise<AcceptFriendResponseDto> {
+    if (currentUserId === friendUserId) {
+      throw FriendErrorCode.SELF_REQUEST;
+    }
+
+    if (
+      ![
+        FriendStatus.ACCEPTED,
+        FriendStatus.REJECTED,
+        FriendStatus.BLOCKED,
+      ].find((s) => s === request.status)
+    ) {
+      throw FriendErrorCode.INVALID_ACCEPT_TYPE;
+    }
+
+    const user = await this.userRepository.findById(currentUserId);
+    if (user === null) {
+      throw UserErrorCode.USER_NOT_FOUND;
+    }
+
+    const friendUser = await this.userRepository.findById(friendUserId);
+    if (friendUser === null) {
+      throw UserErrorCode.USER_NOT_FOUND;
+    }
+
+    let friend = await this.friendRepository.findByUserId(
+      friendUserId,
+      currentUserId
+    );
+
+    // 사용자를 찾을 수 없거나, 친구 상태가 아닐 때
+    if (!friend || friend.friendStatus !== FriendStatus.REQUESTED) {
+      throw FriendErrorCode.INVALID_ACCEPT_REQUEST;
+    }
+
+    if (request.status !== FriendStatus.ACCEPTED) {
+      friend.friendStatus = request.status;
+      await this.friendRepository.save(friend);
+    } else {
+      let inverse = await this.friendRepository.findByUserId(
+        currentUserId,
+        friendUserId
+      );
+
+      if (inverse === null) {
+        inverse = Friend.create(user, friendUser);
+      }
+
+      inverse.friendStatus = FriendStatus.ACCEPTED;
+      friend.friendStatus = FriendStatus.ACCEPTED;
+
+      await this.friendRepository.save(friend);
+      await this.friendRepository.save(inverse);
+    }
+
+    return AcceptFriendResponseDto.from(friend);
   }
 }
