@@ -1,5 +1,7 @@
+import { SignupRequestDto } from "./dto/SignupDto";
 import { injectable } from "inversify";
 import { UserRepository } from "./repositories/user.repository.js";
+import { User } from "./entities/user.entity";
 
 @injectable()
 export class UserService {
@@ -9,7 +11,5 @@ export class UserService {
     this.userRepository = UserRepository;
   }
 
-  async findByName(name: string) {
-    return await this.userRepository.findByName(name);
-  }
+  async signup(request: SignupRequestDto) {}
 }

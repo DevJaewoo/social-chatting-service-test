@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne } from "typeorm";
 import { AutoIdEntity } from "../../abstract/auto-id-entity.js";
-import { DIRECT_CONSTANT } from "../../constants.js";
+import { DIRECT_CONSTANT } from "../../../global/constants.js";
 import { User } from "../../user/entities/user.entity.js";
 import { Direct } from "./direct.entity.js";
 

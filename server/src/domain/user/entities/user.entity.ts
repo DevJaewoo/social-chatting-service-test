@@ -1,13 +1,13 @@
 import { Entity, Column, Unique, OneToMany } from "typeorm";
+import bcrypt from "bcrypt";
 import { AutoIdEntity } from "../../abstract/auto-id-entity.js";
-import { USER_CONSTANT } from "../../constants.js";
+import { USER_CONSTANT } from "../../../global/constants.js";
 import { DirectUser } from "../../direct/entities/direct-user.entity.js";
 import { Follow } from "../../follow/entities/follow.entity.js";
 import { Friend } from "../../friend/entities/friend.entity.js";
 
 @Entity({ name: "user" })
 @Unique("unique_name", ["name"])
-@Unique("unique_nickname", ["nickname"])
 export class User extends AutoIdEntity {
   @Column({
     type: "varchar",
@@ -35,4 +35,23 @@ export class User extends AutoIdEntity {
 
   @OneToMany(() => Friend, (friend) => friend.user, { lazy: true })
   friends: Friend[];
+
+  private constructor() {
+    super();
+  }
+
+  public static create = async (
+    name: string,
+    nickname: string,
+    password: string
+  ) => {
+    const user = new User();
+    user.name = name;
+    user.nickname = nickname;
+
+    const salt = await bcrypt.genSalt();
+    user.password = await bcrypt.hash(password, salt);
+
+    return user;
+  };
 }

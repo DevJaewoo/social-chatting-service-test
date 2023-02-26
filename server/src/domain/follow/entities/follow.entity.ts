@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, Unique } from "typeorm";
 import { AutoIdEntity } from "../../abstract/auto-id-entity.js";
-import { TFollowStatus } from "../../constants.js";
+import { TFollowStatus } from "../../../global/constants.js";
 import { User } from "../../user/entities/user.entity.js";
 
 @Entity({ name: "follow" })

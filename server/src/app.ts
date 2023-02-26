@@ -2,7 +2,7 @@ import "./dotenv.js";
 import express from "express";
 import path from "path";
 import { AppDataSource } from "./data-source.js";
-import { sessionConfigMiddleware } from "./middlewares/sessionConfigMiddleware.js";
+import { sessionConfigMiddleware } from "./global/middlewares/sessionConfigMiddleware.js";
 import { Container } from "inversify";
 import { InversifyExpressServer } from "inversify-express-utils";
 import { bindComponents } from "./domain/bindConfig.js";
