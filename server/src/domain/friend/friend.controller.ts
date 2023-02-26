@@ -47,4 +47,12 @@ export class FriendController {
     );
     return res.status(StatusCodes.NO_CONTENT).send();
   }
+
+  @httpGet("/requests", sessionCheckMiddleware)
+  public async getAddRequestList(req: Request, res: Response) {
+    const requestList = await this.friendService.getAddRequestList(
+      req.session.userId ?? 0
+    );
+    return res.status(StatusCodes.OK).send(instanceToPlain(requestList));
+  }
 }

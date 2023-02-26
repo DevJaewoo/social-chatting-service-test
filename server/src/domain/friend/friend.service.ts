@@ -7,6 +7,7 @@ import { AddFriendResponseDto } from "./dto/add-friend.dto.js";
 import { FriendStatus } from "../../global/constants.js";
 import { FriendErrorCode } from "./friend.error.js";
 import { Friend } from "./entities/friend.entity.js";
+import { AddRequestListResponseDto } from "./dto/add-request-list.dto.js";
 
 @injectable()
 export class FriendService {
@@ -80,5 +81,14 @@ export class FriendService {
     await this.friendRepository.save(friend);
 
     // no-content
+  }
+
+  async getAddRequestList(
+    currentUserId: number
+  ): Promise<AddRequestListResponseDto> {
+    const friends = await this.friendRepository.findAllRequestsByUserId(
+      currentUserId
+    );
+    return AddRequestListResponseDto.from(friends);
   }
 }
