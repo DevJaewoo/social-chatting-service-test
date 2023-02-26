@@ -15,23 +15,19 @@ export const DIRECT_CONSTANT = {
 export const FriendStatus = {
   ACCEPTED: "ACCEPTED", // 수락
   BLOCKED: "BLOCKED", // 차단
+  REQUESTED: "REQUESTED", // 요청
+  REJECTED: "REJECTED", // 거절
+  NONE: "NONE",
 } as const;
 
 export type TFriendStatus = typeof FriendStatus[keyof typeof FriendStatus];
-
-export const FriendRequestStatus = {
-  REQUESTED: "REQUESTED", // 요청
-  REJECTED: "REJECTED", // 거절
-} as const;
-
-export type TFriendRequestStatus =
-  typeof FriendRequestStatus[keyof typeof FriendRequestStatus];
 
 export const FollowStatus = {
   REQUESTED: "REQUESTED", // 요청
   FOLLOWED: "FOLLOWED", // 수락
   REJECTED: "REJECTED", // 거절
   BLOCKED: "BLOCKED", // 차단
+  NONE: "NONE",
 } as const;
 
 export type TFollowStatus = typeof FollowStatus[keyof typeof FollowStatus];
