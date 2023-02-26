@@ -1,6 +1,6 @@
-import { SignupRequestDto } from "./dto/SignupDto";
 import { injectable } from "inversify";
 import { UserRepository } from "./repositories/user.repository.js";
+import { SignupRequestDto } from "./dto/signupDto";
 import { User } from "./entities/user.entity";
 
 @injectable()

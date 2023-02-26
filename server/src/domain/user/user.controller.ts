@@ -5,14 +5,16 @@ import { controller, httpPost } from "inversify-express-utils";
 import { TYPE } from "../types.js";
 import { sessionCheckMiddleware } from "../../global/middlewares/sessionCheckMiddleware.js";
 import { validateBodyMiddleware } from "../../global/middlewares/validateBodyMiddleware.js";
-import { SignupRequestDto } from "./dto/SignupDto.js";
+import { SignupRequestDto } from "./dto/signupDto.js";
 
 @controller("/api/users")
 export class UserController {
   constructor(@inject(TYPE.UserService) private userService: UserService) {}
 
   @httpPost("/signup", validateBodyMiddleware(SignupRequestDto))
-  public async signup(req: Request<{}, {}, SignupRequestDto>, res: Response) {}
+  public async signup(req: Request<{}, {}, SignupRequestDto>, res: Response) {
+    await this.userService.signup(req.body);
+  }
 
   @httpPost("/login", validateBodyMiddleware(SignupRequestDto))
   public async login(req: Request<{}, {}, SignupRequestDto>, res: Response) {}
