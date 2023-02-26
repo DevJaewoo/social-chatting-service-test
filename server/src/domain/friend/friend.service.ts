@@ -19,11 +19,6 @@ export class FriendService {
   }
 
   async getFriendList(currentUserId: number): Promise<FriendListResponseDto> {
-    const user = await this.userRepository.findById(currentUserId);
-    if (user === null) {
-      throw UserErrorCode.USER_NOT_FOUND;
-    }
-
     const friends = await this.friendRepository.findAllByUserId(currentUserId);
     return FriendListResponseDto.from(friends);
   }
@@ -64,5 +59,26 @@ export class FriendService {
     await this.friendRepository.save(friend);
 
     return AddFriendResponseDto.from(friend);
+  }
+
+  async deleteFriend(currentUserId: number, friendUserId: number) {
+    if (currentUserId === friendUserId) {
+      throw FriendErrorCode.SELF_REQUEST;
+    }
+
+    let friend = await this.friendRepository.findByUserId(
+      currentUserId,
+      friendUserId
+    );
+
+    // 사용자를 찾을 수 없거나, 친구 상태가 아닐 때
+    if (!friend || friend.friendStatus !== FriendStatus.ACCEPTED) {
+      throw FriendErrorCode.INVALID_DELETE_REQUEST;
+    }
+
+    friend.friendStatus = FriendStatus.NONE;
+    await this.friendRepository.save(friend);
+
+    // no-content
   }
 }

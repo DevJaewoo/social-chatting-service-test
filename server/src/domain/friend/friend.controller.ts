@@ -39,11 +39,12 @@ export class FriendController {
     return res.status(StatusCodes.OK).send(instanceToPlain(result));
   }
 
-  @httpDelete("", sessionCheckMiddleware)
+  @httpDelete("/:friendId", sessionCheckMiddleware)
   public async deleteFriend(req: Request, res: Response) {
-    const followerList = await this.friendService.getFriendList(
-      parseInt(req.params.userId) ?? 0
+    await this.friendService.deleteFriend(
+      req.session.userId ?? 0,
+      parseInt(req.params.friendId) ?? 0
     );
-    return res.status(StatusCodes.OK).send(instanceToPlain(followerList));
+    return res.status(StatusCodes.NO_CONTENT).send();
   }
 }

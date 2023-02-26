@@ -25,10 +25,10 @@ export class AddFriendResponseDto {
   }
 
   public static from(friend: Friend): AddFriendResponseDto {
-    const signupResponseDto = new AddFriendResponseDto();
-    signupResponseDto._requestId = friend.id;
-    signupResponseDto._userId = friend.friendId;
-    signupResponseDto._status = friend.friendStatus;
-    return signupResponseDto;
+    const addFriendResponseDto = new AddFriendResponseDto();
+    addFriendResponseDto._requestId = friend.id;
+    addFriendResponseDto._userId = friend.friendId;
+    addFriendResponseDto._status = friend.friendStatus;
+    return addFriendResponseDto;
   }
 }
