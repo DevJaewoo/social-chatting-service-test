@@ -1,3 +1,4 @@
+import { Exclude, Expose } from "class-transformer";
 import { IsString, Length } from "class-validator";
 import { USER_CONSTANT } from "../../../global/constants.js";
 import { User } from "./../entities/user.entity.js";
@@ -13,22 +14,29 @@ export class SignupRequestDto {
 }
 
 export class SignupResponseDto {
-  private _id: number;
-  private _name: string;
-  private _nickname: string;
-  private _createdAt: Date;
+  @Exclude() private _id: number;
+  @Exclude() private _name: string;
+  @Exclude() private _nickname: string;
+  @Exclude() private _createdAt: Date;
 
   private constructor() {}
 
+  @Expose()
   public get id(): number {
     return this._id;
   }
+
+  @Expose()
   public get name(): string {
     return this._name;
   }
+
+  @Expose()
   public get nickname(): string {
     return this._nickname;
   }
+
+  @Expose()
   public get createdAt(): Date {
     return this._createdAt;
   }

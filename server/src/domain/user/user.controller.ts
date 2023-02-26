@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { Request, Response } from "express";
 import { inject } from "inversify";
+import { instanceToPlain } from "class-transformer";
 import { UserService } from "./user.service.js";
 import { controller, httpPost } from "inversify-express-utils";
 import { TYPE } from "../types.js";
@@ -17,7 +18,7 @@ export class UserController {
     const result = await this.userService.signup(req.body);
     req.session.userId = result.id;
     req.session.name = result.name;
-    return res.status(StatusCodes.CREATED).json(result);
+    return res.status(StatusCodes.CREATED).send(instanceToPlain(result));
   }
 
   @httpPost("/login", validateBodyMiddleware(SignupRequestDto))
@@ -25,7 +26,7 @@ export class UserController {
     const result = await this.userService.login(req.body);
     req.session.userId = result.id;
     req.session.name = result.name;
-    return res.status(StatusCodes.OK).json(result);
+    return res.status(StatusCodes.OK).send(instanceToPlain(result));
   }
 
   @httpPost("/logout", sessionCheckMiddleware)
