@@ -9,7 +9,11 @@ const App: React.FC<{}> = () => {
   const { userInfo } = currentUserInfoStore();
 
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{ fontFamily: "Pretendard" }}
+    >
       <BrowserRouter>
         <Routes>
           <Route
