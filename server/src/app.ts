@@ -7,7 +7,6 @@ import { Container } from "inversify";
 import { InversifyExpressServer } from "inversify-express-utils";
 import { bindComponents } from "./domain/bindConfig.js";
 import { globalExceptionHandler } from "./global/middlewares/globalExceptionHandler.js";
-import { CommonErrorCode } from "./global/exception/commonErrorCode.js";
 
 const __dirname = path.resolve();
 const FRONTEND_DIR = "/build";

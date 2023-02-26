@@ -1,4 +1,4 @@
-import { ErrorRequestHandler, RequestHandler } from "express";
+import { ErrorRequestHandler } from "express";
 import { CommonErrorCode } from "../exception/commonErrorCode.js";
 import { RestApiException } from "./../exception/errorCode.js";
 
