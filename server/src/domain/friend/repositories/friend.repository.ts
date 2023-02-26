@@ -12,4 +12,11 @@ export const FriendRepository = AppDataSource.getRepository(Friend).extend({
       })
       .getMany();
   },
+
+  async findByUserId(fromId: number, targetId: number) {
+    return this.createQueryBuilder("friend")
+      .where("friend.userId = :userId", { userId: fromId })
+      .andWhere("friend.friendId = :friendId", { friendId: targetId })
+      .getOne();
+  },
 });
