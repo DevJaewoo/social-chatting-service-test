@@ -9,6 +9,7 @@ import { Container } from "inversify";
 import { InversifyExpressServer } from "inversify-express-utils";
 import { bindComponents } from "./domain/bindConfig.js";
 import { globalExceptionHandler } from "./global/middlewares/globalExceptionHandler.js";
+import webSocketServer from "./webSocketServer.js";
 
 const __dirname = path.resolve();
 const FRONTEND_DIR = "/build";
@@ -35,9 +36,15 @@ const initializeExpress = () => {
   const app = server.build();
 
   const httpServer = http.createServer(app);
-  const wsServer = new Server(httpServer);
+  const wsServer = new Server(httpServer, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+    },
+  });
+  webSocketServer(wsServer);
 
-  app.listen(port, () => {
+  httpServer.listen(port, () => {
     console.log(`Server Listening on ${port}`);
   });
 };
