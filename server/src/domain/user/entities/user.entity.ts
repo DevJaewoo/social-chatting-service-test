@@ -25,7 +25,7 @@ export class User extends AutoIdEntity {
   password: string;
 
   @OneToMany(() => DirectUser, (directUser) => directUser.user, { lazy: true })
-  directs: DirectUser;
+  directs: DirectUser[];
 
   @OneToMany(() => Follow, (follow) => follow.followee, { lazy: true }) // 자신이 followee인 목록을 받아오기 때문
   followers: Follow[];
