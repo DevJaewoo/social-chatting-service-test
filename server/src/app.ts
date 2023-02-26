@@ -1,6 +1,8 @@
 import "./dotenv.js";
 import express from "express";
 import path from "path";
+import http from "http";
+import { Server } from "socket.io";
 import { AppDataSource } from "./data-source.js";
 import { sessionConfigMiddleware } from "./global/middlewares/sessionConfigMiddleware.js";
 import { Container } from "inversify";
@@ -31,6 +33,9 @@ const initializeExpress = () => {
   });
 
   const app = server.build();
+
+  const httpServer = http.createServer(app);
+  const wsServer = new Server(httpServer);
 
   app.listen(port, () => {
     console.log(`Server Listening on ${port}`);
