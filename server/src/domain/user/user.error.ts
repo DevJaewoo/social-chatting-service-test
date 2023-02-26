@@ -10,4 +10,10 @@ export const UserErrorCode: ErrorCode = {
     StatusCodes.CONFLICT,
     "중복된 이름이 존재합니다."
   ),
+
+  LOGIN_FAILED: new RestApiException(
+    "LOGIN_FAILED",
+    StatusCodes.UNAUTHORIZED,
+    "아이디 / 비밀번호를 확인해주세요."
+  ),
 } as const;

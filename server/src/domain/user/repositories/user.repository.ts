@@ -7,4 +7,10 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .where("user.name = :name", { name })
       .getExists();
   },
+
+  async findByName(name: string) {
+    return this.createQueryBuilder("user")
+      .where("user.name = :name", { name })
+      .getOne();
+  },
 });
