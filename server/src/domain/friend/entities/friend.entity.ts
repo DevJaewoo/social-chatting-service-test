@@ -6,6 +6,12 @@ import { User } from "../../user/entities/user.entity.js";
 @Entity({ name: "friend" })
 @Unique("unique_friend", ["user", "friend"])
 export class Friend extends AutoIdEntity {
+  @Column({ name: "userId" })
+  userId: number;
+
+  @Column({ name: "friendId" })
+  friendId: number;
+
   @ManyToOne(() => User)
   user: User;
 
@@ -13,5 +19,5 @@ export class Friend extends AutoIdEntity {
   friend: User;
 
   @Column("varchar")
-  status: TFriendStatus;
+  friendStatus: TFriendStatus;
 }

@@ -14,6 +14,12 @@ export class DirectUser {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ name: "userId" })
+  userId: number;
+
+  @Column({ name: "directId" })
+  directId: number;
+
   @ManyToOne(() => User, (user: User) => user.id)
   user: User;
 

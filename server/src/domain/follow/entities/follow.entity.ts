@@ -6,6 +6,12 @@ import { User } from "../../user/entities/user.entity.js";
 @Entity({ name: "follow" })
 @Unique("unique_follow", ["follower", "followee"])
 export class Follow extends AutoIdEntity {
+  @Column({ name: "followerId" })
+  followerId: number;
+
+  @Column({ name: "followeeId" })
+  followeeId: number;
+
   @ManyToOne(() => User)
   follower: User;
 

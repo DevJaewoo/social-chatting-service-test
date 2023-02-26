@@ -6,11 +6,17 @@ import { Direct } from "./direct.entity.js";
 
 @Entity({ name: "direct_chat" })
 export class DirectChat extends AutoIdEntity {
-  @ManyToOne(() => Direct)
-  direct: Direct;
+  @Column({ name: "userId" })
+  userId: number;
+
+  @Column({ name: "directId" })
+  directId: number;
 
   @ManyToOne(() => User)
   user: User;
+
+  @ManyToOne(() => Direct)
+  direct: Direct;
 
   @Column("varchar", { length: DIRECT_CONSTANT.MAX_MESSAGE_LENGTH })
   message: string;
