@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import MainPage from "./main/MainPage";
 import Navigation from "./Navigation";
 
 const ProtectedRoutes: React.FC<{}> = () => {
@@ -7,7 +8,7 @@ const ProtectedRoutes: React.FC<{}> = () => {
       <Navigation />
       <div className="w-full mt-16">
         <Routes>
-          <Route path="/" />
+          <Route path="/" element={<MainPage />} />
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </div>

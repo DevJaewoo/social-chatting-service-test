@@ -1,8 +1,9 @@
 import { Button, PasswordInput, TextInput } from "@mantine/core";
 import axios, { AxiosError } from "axios";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { ErrorCode } from "src/constants";
+import { SocketContext } from "src/context/socketio";
 import { UserInfo, currentUserInfoStore } from "src/stores/useCurrentUserInfo";
 
 const LoginPage: React.FC<{}> = () => {
@@ -15,6 +16,8 @@ const LoginPage: React.FC<{}> = () => {
   const [signupError, setSignupError] = useState<string | undefined>(undefined);
 
   const { updateUserInfo } = currentUserInfoStore();
+
+  const socket = useContext(SocketContext);
 
   const requestLogin: MouseEventHandler = async (event) => {
     event.preventDefault();
@@ -42,6 +45,8 @@ const LoginPage: React.FC<{}> = () => {
       });
 
     if (!response) return;
+
+    socket.emit("login", response.data);
     updateUserInfo(response.data);
   };
 
