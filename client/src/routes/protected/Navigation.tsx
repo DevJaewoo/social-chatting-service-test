@@ -39,7 +39,10 @@ const Navigation: React.FC<{}> = () => {
               <NavigationItem
                 link="/"
                 name="Rooms"
-                highlight={location.pathname === "/"}
+                highlight={
+                  location.pathname === "/" ||
+                  location.pathname.startsWith("/rooms")
+                }
               />
               <NavigationItem
                 link="/users"
