@@ -23,6 +23,8 @@ export const globalExceptionHandler: ErrorRequestHandler = (
     }
 
     // 다른 예외일 경우 INTERNAL SERVER ERROR
+    console.error(err);
+
     const error = CommonErrorCode.INTERNAL_SERVER_ERROR;
     return res.status(error.getStatus()).json(error.getBody());
   } catch (err) {

@@ -7,6 +7,7 @@ import { CommonErrorCode } from "./../../global/exception/commonErrorCode.js";
 import { UserErrorCode } from "./user.error.js";
 import { LoginRequestDto, LoginResponseDto } from "./dto/login.dto.js";
 import { UserListResponseDto as UserListResponseDto } from "./dto/user-list.dto.js";
+import { UserResponseDto } from "./dto/user.dto.js";
 
 @injectable()
 export class UserService {
@@ -48,8 +49,10 @@ export class UserService {
     return LoginResponseDto.from(user);
   }
 
-  async getUserList(id: number): Promise<UserListResponseDto> {
-    const currentUser = await this.userRepository.findByIdWithRelationship(id);
+  async getUserList(currentUserId: number): Promise<UserListResponseDto> {
+    const currentUser = await this.userRepository.findByIdWithRelationship(
+      currentUserId
+    );
     if (currentUser === null) {
       throw CommonErrorCode.UNAUTHORIZED;
     }
@@ -57,5 +60,14 @@ export class UserService {
     const userList = await this.userRepository.find();
 
     return UserListResponseDto.from(currentUser, userList);
+  }
+
+  async getUser(userId: number): Promise<UserResponseDto> {
+    const user = await this.userRepository.findByIdWithRelationship(userId);
+    if (user === null) {
+      throw UserErrorCode.USER_NOT_FOUND;
+    }
+
+    return UserResponseDto.from(user);
   }
 }

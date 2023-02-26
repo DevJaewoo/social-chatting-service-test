@@ -16,4 +16,10 @@ export const UserErrorCode: ErrorCode = {
     StatusCodes.UNAUTHORIZED,
     "아이디 / 비밀번호를 확인해주세요."
   ),
+
+  USER_NOT_FOUND: new RestApiException(
+    "USER_NOT_FOUND",
+    StatusCodes.NOT_FOUND,
+    "존재하지 않는 사용자입니다."
+  ),
 } as const;

@@ -43,4 +43,13 @@ export class UserController {
     );
     return res.status(StatusCodes.OK).send(instanceToPlain(userList));
   }
+
+  @httpGet("/:userId", sessionCheckMiddleware)
+  public async getUser(req: Request, res: Response) {
+    console.log(req.params.userId);
+    const userList = await this.userService.getUser(
+      parseInt(req.params.userId) ?? 0
+    );
+    return res.status(StatusCodes.OK).send(instanceToPlain(userList));
+  }
 }

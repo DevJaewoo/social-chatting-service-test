@@ -18,7 +18,8 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
   async findByIdWithRelationship(id: number) {
     return this.createQueryBuilder("user")
       .leftJoinAndSelect("user.friends", "friend")
-      .leftJoinAndSelect("user.followees", "follow")
+      .leftJoinAndSelect("user.followers", "follower")
+      .leftJoinAndSelect("user.followees", "followee")
       .where("user.id = :id", { id })
       .getOne();
   },
