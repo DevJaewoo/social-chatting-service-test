@@ -3,8 +3,10 @@ import { injectable } from "inversify";
 import { UserRepository } from "./repositories/user.repository.js";
 import { SignupRequestDto, SignupResponseDto } from "./dto/signup.dto.js";
 import { User } from "./entities/user.entity.js";
+import { CommonErrorCode } from "./../../global/exception/commonErrorCode.js";
 import { UserErrorCode } from "./user.error.js";
 import { LoginRequestDto, LoginResponseDto } from "./dto/login.dto.js";
+import { UserListResponseDto as UserListResponseDto } from "./dto/user-list.dto.js";
 
 @injectable()
 export class UserService {
@@ -44,5 +46,16 @@ export class UserService {
     }
 
     return LoginResponseDto.from(user);
+  }
+
+  async getUserList(id: number): Promise<UserListResponseDto> {
+    const currentUser = await this.userRepository.findByIdWithRelationship(id);
+    if (currentUser === null) {
+      throw CommonErrorCode.UNAUTHORIZED;
+    }
+
+    const userList = await this.userRepository.find();
+
+    return UserListResponseDto.from(currentUser, userList);
   }
 }
