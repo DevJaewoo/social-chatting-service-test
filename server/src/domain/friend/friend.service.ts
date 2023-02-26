@@ -77,8 +77,20 @@ export class FriendService {
       throw FriendErrorCode.INVALID_DELETE_REQUEST;
     }
 
+    let inverse = await this.friendRepository.findByUserId(
+      friendUserId,
+      currentUserId
+    );
+
+    // 사용자를 찾을 수 없거나, 친구 상태가 아닐 때
+    if (!inverse || inverse.friendStatus !== FriendStatus.ACCEPTED) {
+      throw FriendErrorCode.INVALID_DELETE_REQUEST;
+    }
+
     friend.friendStatus = FriendStatus.NONE;
+    inverse.friendStatus = FriendStatus.NONE;
     await this.friendRepository.save(friend);
+    await this.friendRepository.save(inverse);
 
     // no-content
   }
