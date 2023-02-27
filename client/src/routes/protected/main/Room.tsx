@@ -2,7 +2,7 @@ import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, TextInput } from "@mantine/core";
 import { SocketContext } from "src/context/socketio";
-import { PublicRoomInfo, RoomNotice } from "src/constants";
+import { PublicRoomInfo, RoomNotice } from "src/socketConstants";
 import { currentUserInfoStore } from "src/stores/useCurrentUserInfo";
 import RoomUser from "./_RoomUser";
 import RoomChat, { Chat, ChatType } from "./_RoomChat";

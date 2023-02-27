@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import MainPage from "./main/MainPage";
 import Room from "./main/Room";
 import Navigation from "./Navigation";
+import UsersPage from "./users/UsersPage";
 
 const ProtectedRoutes: React.FC<{}> = () => {
   return (
@@ -11,7 +12,7 @@ const ProtectedRoutes: React.FC<{}> = () => {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/rooms/:roomId" element={<Room />} />
-          <Route path="/users" />
+          <Route path="/users" element={<UsersPage />} />
           <Route path="/friends" />
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>

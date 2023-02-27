@@ -1,7 +1,7 @@
 import { Button, TextInput } from "@mantine/core";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PublicRoomInfo, PublicRoomListInfo } from "src/constants";
+import { PublicRoomInfo, PublicRoomListInfo } from "src/socketConstants";
 import { SocketContext } from "src/context/socketio";
 
 interface Props {

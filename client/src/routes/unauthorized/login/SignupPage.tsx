@@ -1,7 +1,7 @@
 import { Button, PasswordInput, TextInput } from "@mantine/core";
 import axios, { AxiosError } from "axios";
 import { MouseEventHandler, useState } from "react";
-import { ErrorCode } from "src/constants";
+import { ErrorCode } from "src/socketConstants";
 import { socket } from "src/context/socketio";
 import { UserInfo, currentUserInfoStore } from "src/stores/useCurrentUserInfo";
 
