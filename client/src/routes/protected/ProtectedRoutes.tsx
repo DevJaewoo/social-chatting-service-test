@@ -12,7 +12,7 @@ const ProtectedRoutes: React.FC<{}> = () => {
       <div className="w-full mt-16">
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/rooms/*" element={<Room />} />
+          <Route path="/rooms/:roomId" element={<Room />} />
           <Route path="/users/*" element={<UsersPage />} />
           <Route path="/friends/*" element={<FriendPage />} />
           <Route path="*" element={<Navigate replace to="/" />} />

@@ -66,17 +66,15 @@ const Room: React.FC<{}> = () => {
   };
 
   useEffect(() => {
+    socket.on("roomInfo", (_roomInfo: PublicRoomInfo) => {
+      setRoomInfo(() => _roomInfo);
+    });
+  }, [socket]);
+
+  useEffect(() => {
     if (roomId === undefined) {
       navigate("/");
     }
-
-    socket.on("roomInfo", (_roomInfo: PublicRoomInfo) => {
-      setRoomInfo({
-        id: _roomInfo.id,
-        name: _roomInfo.name,
-        users: [..._roomInfo.users],
-      });
-    });
 
     socket.on("roomLeave", () => {
       navigate("/");
