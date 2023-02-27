@@ -10,7 +10,7 @@ export type ChatSocket = Socket<
 export interface ClientEvent {
   login: (userInfo: UserInfo) => void;
   roomList: () => void;
-  roomInfo: (name: string) => void;
+  roomInfo: (name: number) => void;
   roomCreate: (name: string) => void;
   roomEnter: (roomName: string) => void;
 }

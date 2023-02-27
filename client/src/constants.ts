@@ -8,7 +8,7 @@ export interface ErrorCode {
 export interface ClientEvent {
   login: (userInfo: UserInfo) => void;
   roomList: () => void;
-  roomInfo: (name: string) => void;
+  roomInfo: (id: number) => void;
   roomCreate: (name: string) => void;
   roomEnter: (roomName: string) => void;
 }

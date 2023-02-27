@@ -50,6 +50,9 @@ const webSocketServer = (httpServer: http.Server) => {
   const getPublicRoom = (name: string) =>
     publicRooms.find((r) => r.name === name);
 
+  const getPublicRoomById = (id: number) =>
+    publicRooms.find((r) => r.id === id);
+
   const getParticipantCount = (name: string): number => {
     return wsServer.sockets.adapter.rooms.get(name)?.size ?? 0;
   };
