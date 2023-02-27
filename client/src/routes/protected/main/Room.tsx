@@ -71,7 +71,11 @@ const Room: React.FC<{}> = () => {
     }
 
     socket.on("roomInfo", (_roomInfo: PublicRoomInfo) => {
-      setRoomInfo(_roomInfo);
+      setRoomInfo({
+        id: _roomInfo.id,
+        name: _roomInfo.name,
+        users: [..._roomInfo.users],
+      });
     });
 
     socket.on("roomLeave", () => {
@@ -107,7 +111,7 @@ const Room: React.FC<{}> = () => {
       socket.off("roomNotice");
       socket.off("roomChat");
     };
-  }, [socket, navigate, roomId]);
+  }, [socket, navigate, roomId, roomInfo]);
 
   const onLeaveRoom = () => {
     socket.emit("roomLeave");
