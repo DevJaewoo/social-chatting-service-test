@@ -36,7 +36,6 @@ const RoomList: React.FC<{}> = () => {
     });
 
     socket.on("roomEnter", (_roomInfo: PublicRoomInfo) => {
-      console.log(_roomInfo);
       navigate(`/rooms/${_roomInfo.id}`);
     });
 
