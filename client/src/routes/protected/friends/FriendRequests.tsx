@@ -1,7 +1,12 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { AddRequestListItem, AddRequestListResponse } from "src/api/friendApi";
+import {
+  AcceptFriendResponse,
+  AddRequestListItem,
+  AddRequestListResponse,
+} from "src/api/friendApi";
+import { FriendStatus, TFriendStatus } from "src/constants";
 import FriendRequestItem from "./_FriendRequestItem";
 
 const FriendRequests: React.FC<{}> = () => {
@@ -20,16 +25,31 @@ const FriendRequests: React.FC<{}> = () => {
     getAddRequestList();
   }, []);
 
-  const onAcceptClick = async (addRequest: AddRequestListItem) => {
+  const onAccept = async (
+    addRequest: AddRequestListItem,
+    status: TFriendStatus
+  ) => {
     const response = await axios
-      .put(`/api/friends/requests/${addRequest.id}`)
+      .patch<AcceptFriendResponse>(`/api/friends/requests/${addRequest.id}`, {
+        status,
+      })
       .catch((_) => {});
 
-    if (!response || response.status !== 204) return;
-    setRequestList(requestList.filter((f) => f.id !== addRequest.id));
+    if (!response) return;
+    setRequestList(requestList.filter((r) => r.id !== addRequest.id));
   };
 
-  const onDeclineClick = () => {};
+  const onAcceptClick = (addRequest: AddRequestListItem) => {
+    onAccept(addRequest, FriendStatus.ACCEPTED);
+  };
+
+  const onRejectClick = (addRequest: AddRequestListItem) => {
+    onAccept(addRequest, FriendStatus.REJECTED);
+  };
+
+  const onBlockClick = (addRequest: AddRequestListItem) => {
+    onAccept(addRequest, FriendStatus.BLOCKED);
+  };
 
   return (
     <div className="flex flex-col w-full items-center">
@@ -47,12 +67,13 @@ const FriendRequests: React.FC<{}> = () => {
         </div>
         <div className="flex flex-col items-center w-full min-h-full">
           {requestList &&
-            requestList.map((user) => (
+            requestList.map((request) => (
               <FriendRequestItem
-                key={user.id}
-                requestListItem={user}
+                key={request.id}
+                requestListItem={request}
                 onAcceptClick={onAcceptClick}
-                onRejectClick={onDeclineClick}
+                onRejectClick={onRejectClick}
+                onBlockClick={onBlockClick}
               />
             ))}
         </div>

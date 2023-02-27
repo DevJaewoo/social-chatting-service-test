@@ -27,3 +27,13 @@ export interface AddRequestListItem {
   nickname: string;
   createdAt: Date;
 }
+
+export interface AcceptFriendRequest {
+  status: TFriendStatus;
+}
+
+export interface AcceptFriendResponse {
+  requestId: number;
+  userId: number;
+  status: TFriendStatus;
+}

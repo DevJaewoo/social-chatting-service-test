@@ -6,12 +6,14 @@ interface Props {
   requestListItem: AddRequestListItem;
   onAcceptClick: (requestListItem: AddRequestListItem) => void;
   onRejectClick: (requestListItem: AddRequestListItem) => void;
+  onBlockClick: (requestListItem: AddRequestListItem) => void;
 }
 
 const FriendRequestItem: React.FC<Props> = ({
   requestListItem,
   onAcceptClick,
   onRejectClick,
+  onBlockClick,
 }) => {
   return (
     <div className="flex flex-row justify-between items-center w-full h-20 my-4 p-3 rounded-md shadow-lg">
@@ -34,6 +36,13 @@ const FriendRequestItem: React.FC<Props> = ({
           onClick={() => onRejectClick(requestListItem)}
         >
           거절
+        </Button>
+        <Button
+          className="ml-2 bg-blue-600"
+          size="lg"
+          onClick={() => onBlockClick(requestListItem)}
+        >
+          차단
         </Button>
       </div>
     </div>
