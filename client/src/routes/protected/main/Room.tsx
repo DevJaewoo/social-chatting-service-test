@@ -1,21 +1,20 @@
-import { useContext, useEffect, useState } from "react";
+import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { SocketContext } from "src/context/socketio";
-import {
-  NoticeType,
-  PublicRoomInfo,
-  RoomNotice,
-  TNoticeType,
-} from "src/constants";
 import { Button, TextInput } from "@mantine/core";
+import { SocketContext } from "src/context/socketio";
+import { PublicRoomInfo, RoomNotice } from "src/constants";
+import { currentUserInfoStore } from "src/stores/useCurrentUserInfo";
 import RoomUser from "./_RoomUser";
+import RoomChat, { Chat, ChatType } from "./_RoomChat";
 
 const Room: React.FC<{}> = () => {
   const { roomId } = useParams();
+  const { userInfo } = currentUserInfoStore();
 
   const socket = useContext(SocketContext);
   const navigate = useNavigate();
   const [chatting, setChatting] = useState<string>("");
+  const [chatList, setChatList] = useState<Chat[]>([]);
   const [roomInfo, setRoomInfo] = useState<PublicRoomInfo>({
     id: 0,
     name: "",
@@ -39,6 +38,14 @@ const Room: React.FC<{}> = () => {
         ],
       };
     });
+
+    setChatList((_chatList) => [
+      ..._chatList,
+      {
+        type: ChatType.CHAT_NOTICE,
+        message: `${notice.user.nickname}님이 입장하셨습니다.`,
+      },
+    ]);
   };
 
   const onUserLeave = (notice: RoomNotice) => {
@@ -48,6 +55,14 @@ const Room: React.FC<{}> = () => {
         users: _roomInfo.users.filter((u) => u.id !== notice.user.id),
       };
     });
+
+    setChatList((_chatList) => [
+      ..._chatList,
+      {
+        type: ChatType.CHAT_NOTICE,
+        message: `${notice.user.nickname}님이 퇴장하셨습니다.`,
+      },
+    ]);
   };
 
   useEffect(() => {
@@ -72,12 +87,29 @@ const Room: React.FC<{}> = () => {
       NoticeEvent[notice.type](notice);
     });
 
+    socket.on("roomChat", (chat) => {
+      setChatList((_chatList) => [
+        ..._chatList,
+        {
+          type:
+            chat.userId === userInfo?.id
+              ? ChatType.CHAT_ME
+              : ChatType.CHAT_USER,
+          user:
+            roomInfo.users.find((u) => u.id === chat.userId)?.nickname ?? "",
+          message: chat.message,
+        },
+      ]);
+    });
+
     socket.emit("roomInfo", parseInt(roomId ?? "0", 10));
 
     // unmount 시 listener 해제
     return () => {
       socket.off("roomInfo");
       socket.off("roomLeave");
+      socket.off("roomNotice");
+      socket.off("roomChat");
     };
   }, [socket, navigate, roomId]);
 
@@ -85,7 +117,15 @@ const Room: React.FC<{}> = () => {
     socket.emit("roomLeave");
   };
 
-  console.dir(roomInfo);
+  const onChatting: MouseEventHandler = (event) => {
+    event.preventDefault();
+
+    setChatting("");
+    socket.emit("roomChat", {
+      roomName: roomInfo.name,
+      message: chatting,
+    });
+  };
 
   return (
     <div className="flex flex-col w-full items-center">
@@ -95,9 +135,14 @@ const Room: React.FC<{}> = () => {
             <h2 className="w-full pb-2 border-b">
               [번호: {roomInfo.id}] {roomInfo.name}
             </h2>
-            <div className="w-full mt-4">map</div>
+            <div className="w-full mt-4">
+              {chatList.map((chat, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <RoomChat key={index} chat={chat} />
+              ))}
+            </div>
           </div>
-          <div className="flex flex-row items-center w-full h-10 mb-2">
+          <form className="flex flex-row items-center w-full h-10 mb-2">
             <TextInput
               className="flex-1"
               placeholder="채팅 내용을 입력해주세요"
@@ -105,10 +150,15 @@ const Room: React.FC<{}> = () => {
               onChange={(event) => setChatting(event.currentTarget.value)}
               size="xl"
             />
-            <Button className="bg-blue-600 ml-4" size="xl">
+            <Button
+              type="submit"
+              className="bg-blue-600 ml-4"
+              size="xl"
+              onClick={onChatting}
+            >
               전송
             </Button>
-          </div>
+          </form>
         </div>
         <div className="flex flex-col justify-between items-center min-h-full w-60 ml-10 p-4 shadow-lg rounded-lg">
           <div className="flex flex-col w-full">
@@ -116,8 +166,8 @@ const Room: React.FC<{}> = () => {
               현재 인원: {roomInfo.users.length}
             </h2>
             <div className="w-full mt-2">
-              {roomInfo.users.map((userInfo) => (
-                <RoomUser key={userInfo.id} userInfo={userInfo} />
+              {roomInfo.users.map((_userInfo) => (
+                <RoomUser key={_userInfo.id} userInfo={_userInfo} />
               ))}
             </div>
           </div>

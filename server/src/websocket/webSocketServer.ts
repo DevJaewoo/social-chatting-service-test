@@ -7,6 +7,8 @@ import {
   NoticeType,
   PublicRoomInfo,
   PublicRoomListInfo,
+  RoomChatRequest,
+  RoomChatResponse,
   RoomNotice,
   ServerEvent,
   UserInfo,
@@ -175,7 +177,7 @@ const webSocketServer = (httpServer: http.Server) => {
       notifyRoomList();
     });
 
-    socket.on("roomEnter", (name) => {
+    socket.on("roomEnter", (name: string) => {
       if (!validateUser(socket.data)) {
         socket.emit("error", "인증되지 않은 사용자입니다.");
         return;
@@ -193,7 +195,7 @@ const webSocketServer = (httpServer: http.Server) => {
       notifyRoomList();
     });
 
-    socket.on("roomInfo", (id) => {
+    socket.on("roomInfo", (id: number) => {
       if (!validateUser(socket.data)) {
         socket.emit("error", "인증되지 않은 사용자입니다.");
         return;
@@ -226,6 +228,26 @@ const webSocketServer = (httpServer: http.Server) => {
       leaveRoom(socket);
       socket.emit("roomLeave");
       notifyRoomList();
+    });
+
+    socket.on("roomChat", (request: RoomChatRequest) => {
+      if (!validateUser(socket.data)) {
+        socket.emit("error", "인증되지 않은 사용자입니다.");
+        return;
+      }
+
+      const room = getPublicRoom(request.roomName);
+      if (room === undefined) {
+        socket.emit("error", "존재하지 않는 방입니다.");
+        return;
+      }
+
+      const response: RoomChatResponse = {
+        userId: socket.data.id ?? 0,
+        message: request.message,
+      };
+
+      wsServer.in(room.name).emit("roomChat", response);
     });
 
     socket.on("disconnecting", () => {

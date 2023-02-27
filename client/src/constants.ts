@@ -7,11 +7,16 @@ export interface ErrorCode {
 
 export interface ClientEvent {
   login: (userInfo: UserInfo) => void;
+
+  // Room 관련
   roomList: () => void;
-  roomInfo: (id: number) => void;
+  roomInfo: (name: number) => void;
   roomCreate: (name: string) => void;
   roomEnter: (roomName: string) => void;
   roomLeave: () => void;
+
+  // Chatting 관련
+  roomChat: (chat: RoomChatRequest) => void;
 }
 
 export interface ServerEvent {
@@ -25,6 +30,7 @@ export interface ServerEvent {
 
   // Chatting 관련
   roomNotice: (notice: RoomNotice) => void;
+  roomChat: (chat: RoomChatResponse) => void;
 }
 
 export interface InternalEvent {}
@@ -52,4 +58,14 @@ export interface RoomNotice {
   roomId: number;
   type: TNoticeType;
   user: UserInfo;
+}
+
+export interface RoomChatRequest {
+  roomName: string;
+  message: string;
+}
+
+export interface RoomChatResponse {
+  userId: number;
+  message: string;
 }

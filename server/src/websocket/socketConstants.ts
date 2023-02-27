@@ -7,13 +7,25 @@ export type ChatSocket = Socket<
   UserInfo
 >;
 
+export interface UserInfo {
+  id: number;
+  name: string;
+  nickname: string;
+  createdAt: Date;
+}
+
 export interface ClientEvent {
   login: (userInfo: UserInfo) => void;
+
+  // Room 관련
   roomList: () => void;
   roomInfo: (name: number) => void;
   roomCreate: (name: string) => void;
   roomEnter: (roomName: string) => void;
   roomLeave: () => void;
+
+  // Chatting 관련
+  roomChat: (chat: RoomChatRequest) => void;
 }
 
 export interface ServerEvent {
@@ -27,16 +39,10 @@ export interface ServerEvent {
 
   // Chatting 관련
   roomNotice: (notice: RoomNotice) => void;
+  roomChat: (chat: RoomChatResponse) => void;
 }
 
 export interface InternalEvent {}
-
-export interface UserInfo {
-  id: number;
-  name: string;
-  nickname: string;
-  createdAt: Date;
-}
 
 export interface PublicRoomInfo {
   id: number;
@@ -61,4 +67,14 @@ export interface RoomNotice {
   roomId: number;
   type: TNoticeType;
   user: UserInfo;
+}
+
+export interface RoomChatRequest {
+  roomName: string;
+  message: string;
+}
+
+export interface RoomChatResponse {
+  userId: number;
+  message: string;
 }
