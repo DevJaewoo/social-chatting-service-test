@@ -88,18 +88,14 @@ const Room: React.FC<{}> = () => {
     });
 
     socket.on("roomChat", (chat) => {
-      setChatList((_chatList) => [
-        ..._chatList,
-        {
-          type:
-            chat.userId === userInfo?.id
-              ? ChatType.CHAT_ME
-              : ChatType.CHAT_USER,
-          user:
-            roomInfo.users.find((u) => u.id === chat.userId)?.nickname ?? "",
-          message: chat.message,
-        },
-      ]);
+      const newChat = {
+        type:
+          chat.userId === userInfo?.id ? ChatType.CHAT_ME : ChatType.CHAT_USER,
+        user: roomInfo.users.find((u) => u.id === chat.userId)?.nickname ?? "",
+        message: chat.message,
+      };
+
+      setChatList((_chatList) => [..._chatList, newChat]);
     });
 
     socket.emit("roomInfo", parseInt(roomId ?? "0", 10));
@@ -119,6 +115,7 @@ const Room: React.FC<{}> = () => {
 
   const onChatting: MouseEventHandler = (event) => {
     event.preventDefault();
+    if (chatting.trim() === "") return;
 
     setChatting("");
     socket.emit("roomChat", {
@@ -142,7 +139,7 @@ const Room: React.FC<{}> = () => {
               ))}
             </div>
           </div>
-          <form className="flex flex-row items-center w-full h-10 mb-2">
+          <form className="flex flex-row items-center w-full h-10 mt-4 mb-2">
             <TextInput
               className="flex-1"
               placeholder="채팅 내용을 입력해주세요"

@@ -242,6 +242,11 @@ const webSocketServer = (httpServer: http.Server) => {
         return;
       }
 
+      if (request.message.trim() === "") {
+        socket.emit("error", "메시지는 비어있을 수 없습니다.");
+        return;
+      }
+
       const response: RoomChatResponse = {
         userId: socket.data.id ?? 0,
         message: request.message,
