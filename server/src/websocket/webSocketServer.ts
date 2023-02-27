@@ -35,7 +35,7 @@ const webSocketServer = (httpServer: http.Server) => {
   const validateUser = (
     userInfo: UserInfo | Partial<UserInfo> | undefined
   ): boolean => {
-    return userInfo?.id === undefined;
+    return userInfo?.id !== undefined;
   };
 
   const convertToUser = (user: Partial<UserInfo>): UserInfo => {
@@ -58,6 +58,7 @@ const webSocketServer = (httpServer: http.Server) => {
   };
 
   const getPublicRoomList = (): PublicRoomListInfo[] => {
+    console.log(publicRooms);
     return publicRooms.map((p) => {
       return {
         id: p.id,
@@ -107,7 +108,7 @@ const webSocketServer = (httpServer: http.Server) => {
       console.log(`Socket ${socket.data.nickname} is leaving room ${room}.`);
 
       // 방 안에 혼자 있을 경우 방 제거
-      if (getParticipantCount(room) <= 0) {
+      if (getParticipantCount(room) <= 1) {
         console.log(`Remove room ${room}`);
         publicRooms = publicRooms.filter((value) => value.name != room);
       } else {
@@ -144,19 +145,21 @@ const webSocketServer = (httpServer: http.Server) => {
     socket.on("roomCreate", (name: string) => {
       if (!validateUser(socket.data)) {
         socket.emit("error", "인증되지 않은 사용자입니다.");
+        return;
       }
 
       // 방 생성 로직
       name = name.trim();
       if (getPublicRoom(name)) {
         socket.emit("error", "같은 이름의 방이 존재합니다.");
+        return;
       }
 
       id += 1;
       const newRoom: PublicRoomInfo = {
         id,
         name: name.trim(),
-        users: [convertToUser(socket.data)],
+        users: [],
       };
 
       publicRooms.push(newRoom);
@@ -171,6 +174,7 @@ const webSocketServer = (httpServer: http.Server) => {
     socket.on("roomEnter", (name) => {
       if (!validateUser(socket.data)) {
         socket.emit("error", "인증되지 않은 사용자입니다.");
+        return;
       }
 
       if (socket.rooms.size > 1) {
@@ -185,12 +189,39 @@ const webSocketServer = (httpServer: http.Server) => {
       notifyRoomList();
     });
 
+    socket.on("roomInfo", (id) => {
+      if (!validateUser(socket.data)) {
+        socket.emit("error", "인증되지 않은 사용자입니다.");
+        return;
+      }
+
+      const room = getPublicRoomById(id);
+      if (room === undefined) {
+        socket.emit("error", "존재하지 않는 방입니다.");
+        return;
+      }
+
+      socket.emit("roomInfo", room);
+    });
+
     socket.on("roomList", () => {
       if (!validateUser(socket.data)) {
         socket.emit("error", "인증되지 않은 사용자입니다.");
+        return;
       }
 
       socket.emit("roomList", getPublicRoomList());
+    });
+
+    socket.on("roomLeave", () => {
+      if (!validateUser(socket.data)) {
+        socket.emit("error", "인증되지 않은 사용자입니다.");
+        return;
+      }
+
+      leaveRoom(socket);
+      socket.emit("roomLeave");
+      notifyRoomList();
     });
 
     socket.on("disconnecting", () => {

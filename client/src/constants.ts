@@ -11,6 +11,7 @@ export interface ClientEvent {
   roomInfo: (id: number) => void;
   roomCreate: (name: string) => void;
   roomEnter: (roomName: string) => void;
+  roomLeave: () => void;
 }
 
 export interface ServerEvent {
@@ -20,6 +21,7 @@ export interface ServerEvent {
   roomList: (roomList: PublicRoomListInfo[]) => void;
   roomInfo: (roomInfo: PublicRoomInfo) => void;
   roomEnter: (roomInfo: PublicRoomInfo) => void;
+  roomLeave: () => void;
 
   // Chatting 관련
   roomNotice: (notice: RoomNotice) => void;
