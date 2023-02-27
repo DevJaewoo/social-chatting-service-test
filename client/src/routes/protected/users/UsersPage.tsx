@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { UserListItem, UserListResponse } from "src/api/userApi";
+import { currentUserInfoStore } from "src/stores/useCurrentUserInfo";
 import UserItem from "./_UserItem";
 
 const UserPage: React.FC<{}> = () => {
+  const { userInfo } = currentUserInfoStore();
   const [userList, setUserList] = useState<UserListItem[]>([]);
 
   useEffect(() => {
@@ -16,7 +18,9 @@ const UserPage: React.FC<{}> = () => {
       .catch((err) => console.log(err));
 
     if (!response) return;
-    setUserList(response.data.userList);
+    setUserList(
+      response.data.userList.filter((user) => user.id !== userInfo?.id)
+    );
   };
 
   return (

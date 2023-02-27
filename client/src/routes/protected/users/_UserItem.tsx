@@ -1,6 +1,14 @@
 import { Button } from "@mantine/core";
+import axios from "axios";
+import { useState } from "react";
+import { AddFriendResponse } from "src/api/friendApi";
 import { UserListItem } from "src/api/userApi";
-import { FollowStatus, FriendStatus } from "src/constants";
+import {
+  FollowStatus,
+  FriendStatus,
+  TFollowStatus,
+  TFriendStatus,
+} from "src/constants";
 import { getFormatedDate } from "src/utils/dateFormat";
 
 interface Props {
@@ -24,6 +32,21 @@ const FriendText = {
 } as const;
 
 const UserItem: React.FC<Props> = ({ userListItem }) => {
+  const [friendStatus, setFriendStatus] = useState<TFriendStatus>(
+    userListItem.friendStatus
+  );
+  const [followStatus] = useState<TFollowStatus>(userListItem.followStatus);
+
+  const addFriendRequest = async () => {
+    if (friendStatus !== FriendStatus.NONE) return;
+    const response = await axios
+      .put<AddFriendResponse>(`/api/friends/${userListItem.id}`)
+      .catch((err) => console.log(err));
+
+    if (!response) return;
+    setFriendStatus(response.data.status);
+  };
+
   return (
     <div className="flex flex-row justify-between items-center w-full h-20 my-4 p-3 rounded-md shadow-lg">
       <div className="flex flex-row items-center">
@@ -34,23 +57,24 @@ const UserItem: React.FC<Props> = ({ userListItem }) => {
       <div>
         <Button
           className={`${
-            userListItem.followStatus === FollowStatus.NONE
+            followStatus === FollowStatus.NONE
               ? "bg-blue-600"
-              : "bg-gray-400"
+              : "bg-gray-400 hover:bg-gray-400"
           }`}
           size="lg"
         >
-          {FollowText[userListItem.followStatus]}
+          {FollowText[followStatus]}
         </Button>
         <Button
           className={`ml-2 ${
-            userListItem.friendStatus === FriendStatus.NONE
+            friendStatus === FriendStatus.NONE
               ? "bg-blue-600"
-              : "bg-gray-400"
+              : "bg-gray-400 hover:bg-gray-400"
           }`}
           size="lg"
+          onClick={addFriendRequest}
         >
-          {FriendText[userListItem.friendStatus]}
+          {FriendText[friendStatus]}
         </Button>
       </div>
     </div>
