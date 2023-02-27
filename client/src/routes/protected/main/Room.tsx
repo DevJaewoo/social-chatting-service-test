@@ -1,7 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { SocketContext } from "src/context/socketio";
-import { PublicRoomInfo } from "src/constants";
+import {
+  NoticeType,
+  PublicRoomInfo,
+  RoomNotice,
+  TNoticeType,
+} from "src/constants";
 import { Button, TextInput } from "@mantine/core";
 
 const Room: React.FC<{}> = () => {
@@ -16,6 +21,34 @@ const Room: React.FC<{}> = () => {
     users: [],
   });
 
+  const onUserEnter = (notice: RoomNotice) => {
+    setRoomInfo((_roomInfo) => {
+      if (_roomInfo.users.find((r) => r.id === notice.user.id))
+        return _roomInfo;
+      return {
+        ..._roomInfo,
+        users: [
+          ..._roomInfo.users,
+          {
+            id: notice.user.id,
+            name: notice.user.name,
+            nickname: notice.user.nickname,
+            createdAt: notice.user.createdAt,
+          },
+        ],
+      };
+    });
+  };
+
+  const onUserLeave = (notice: RoomNotice) => {
+    setRoomInfo((_roomInfo) => {
+      return {
+        ..._roomInfo,
+        users: _roomInfo.users.filter((u) => u.id !== notice.user.id),
+      };
+    });
+  };
+
   useEffect(() => {
     if (roomId === undefined) {
       navigate("/");
@@ -27,6 +60,15 @@ const Room: React.FC<{}> = () => {
 
     socket.on("roomLeave", () => {
       navigate("/");
+    });
+
+    const NoticeEvent = {
+      USER_ENTER: onUserEnter,
+      USER_LEAVE: onUserLeave,
+    };
+
+    socket.on("roomNotice", (notice) => {
+      NoticeEvent[notice.type](notice);
     });
 
     socket.emit("roomInfo", parseInt(roomId ?? "0", 10));
@@ -41,6 +83,8 @@ const Room: React.FC<{}> = () => {
   const onLeaveRoom = () => {
     socket.emit("roomLeave");
   };
+
+  console.dir(roomInfo);
 
   return (
     <div className="flex flex-col w-full items-center">

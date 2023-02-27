@@ -2,6 +2,7 @@ import { Button, PasswordInput, TextInput } from "@mantine/core";
 import axios, { AxiosError } from "axios";
 import { MouseEventHandler, useState } from "react";
 import { ErrorCode } from "src/constants";
+import { socket } from "src/context/socketio";
 import { UserInfo, currentUserInfoStore } from "src/stores/useCurrentUserInfo";
 
 const SignupPage: React.FC<{}> = () => {
@@ -41,6 +42,7 @@ const SignupPage: React.FC<{}> = () => {
       });
 
     if (!response) return;
+    socket.emit("login", response.data);
     updateUserInfo(response.data);
   };
 

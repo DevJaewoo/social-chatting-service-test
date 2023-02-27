@@ -115,6 +115,10 @@ const webSocketServer = (httpServer: http.Server) => {
         const leaveRoom = getPublicRoom(room);
         if (!leaveRoom) return;
 
+        leaveRoom.users = leaveRoom.users.filter(
+          (u) => u.id !== socket.data.id
+        );
+
         const notice: RoomNotice = {
           roomId: leaveRoom.id,
           type: NoticeType.USER_LEAVE,
