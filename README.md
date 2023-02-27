@@ -1,7 +1,23 @@
 # social-chatting-service-test
 
+- [사용 기술](#사용-기술)
 - [실행 방법](#실행-방법)
 
+## 사용 기술
+### Server
+- Node.js + Typescript
+- Express + Inversify
+- TypeORM
+- Socket.io
+
+### Client
+- React + Typescript + ESLint
+- TailwindCSS
+- Zustand
+- Socket.io
+
+### Database
+- MySQL
 
 ## 실행 방법
 1. [Client](./client) 폴더 이동
