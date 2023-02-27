@@ -9,19 +9,19 @@ const UserPage: React.FC<{}> = () => {
   const [userList, setUserList] = useState<UserListItem[]>([]);
 
   useEffect(() => {
+    const getUserList = async () => {
+      const response = await axios
+        .get<UserListResponse>("/api/users")
+        .catch((_) => {});
+
+      if (!response) return;
+      setUserList(
+        response.data.userList.filter((user) => user.id !== userInfo?.id)
+      );
+    };
+
     getUserList();
-  }, []);
-
-  const getUserList = async () => {
-    const response = await axios
-      .get<UserListResponse>("/api/users")
-      .catch((err) => console.log(err));
-
-    if (!response) return;
-    setUserList(
-      response.data.userList.filter((user) => user.id !== userInfo?.id)
-    );
-  };
+  }, [userInfo]);
 
   return (
     <div className="flex flex-col w-full items-center">

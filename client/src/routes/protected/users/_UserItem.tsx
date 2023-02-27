@@ -41,7 +41,7 @@ const UserItem: React.FC<Props> = ({ userListItem }) => {
     if (friendStatus !== FriendStatus.NONE) return;
     const response = await axios
       .put<AddFriendResponse>(`/api/friends/${userListItem.id}`)
-      .catch((err) => console.log(err));
+      .catch((_) => {});
 
     if (!response) return;
     setFriendStatus(response.data.status);

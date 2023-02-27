@@ -111,7 +111,7 @@ const Room: React.FC<{}> = () => {
       socket.off("roomNotice");
       socket.off("roomChat");
     };
-  }, [socket, navigate, roomId, roomInfo]);
+  }, [socket, navigate, roomId, roomInfo, userInfo]);
 
   const onLeaveRoom = () => {
     socket.emit("roomLeave");
