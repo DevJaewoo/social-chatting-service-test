@@ -1,6 +1,10 @@
 import { TFriendStatus } from "src/constants";
 
-export interface FriendListItemResponseDto {
+export interface FriendListResponse {
+  friendList: FriendListItem[];
+}
+
+export interface FriendListItem {
   id: number;
   name: string;
   nickname: string;
@@ -11,4 +15,15 @@ export interface AddFriendResponse {
   requestId: number;
   userId: number;
   status: TFriendStatus;
+}
+
+export interface AddRequestListResponse {
+  addRequestList: AddRequestListItem[];
+}
+
+export interface AddRequestListItem {
+  id: number;
+  name: string;
+  nickname: string;
+  createdAt: Date;
 }
