@@ -25,6 +25,7 @@
     }
   },
   "rules": {
+    "max-len": ["warn", { "code": 80 }],
     "arrow-body-style": "off",
     "semi": ["warn", "always"],
     "react/display-name": "off",
