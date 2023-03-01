@@ -79,10 +79,6 @@ const Room: React.FC<{}> = () => {
   }, [roomId]);
 
   useEffect(() => {
-    socket.on("roomLeave", () => {
-      navigate("/");
-    });
-
     const NoticeEvent = {
       USER_ENTER: onUserEnter,
       USER_LEAVE: onUserLeave,
@@ -92,6 +88,14 @@ const Room: React.FC<{}> = () => {
       NoticeEvent[notice.type](notice);
     });
 
+    return () => {
+      socket.off("roomNotice");
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     socket.on("roomChat", (chat) => {
       const newChat = {
         type:
@@ -105,13 +109,24 @@ const Room: React.FC<{}> = () => {
 
     // unmount 시 listener 해제
     return () => {
-      socket.off("roomLeave");
-      socket.off("roomNotice");
       socket.off("roomChat");
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, roomInfo, userInfo]);
+
+  useEffect(() => {
+    socket.on("roomLeave", () => {
+      navigate("/");
+    });
+
+    // unmount 시 listener 해제
+    return () => {
+      socket.off("roomLeave");
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate]);
 
   const onLeaveRoom = () => {
     socket.emit("roomLeave");
