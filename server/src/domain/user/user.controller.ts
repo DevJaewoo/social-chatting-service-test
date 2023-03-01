@@ -44,6 +44,13 @@ export class UserController {
     return res.status(StatusCodes.OK).send(instanceToPlain(userList));
   }
 
+  @httpGet("/current", sessionCheckMiddleware)
+  public async getCurrentUser(req: Request, res: Response) {
+    // userId session은 middleware에서 검사됨
+    const userList = await this.userService.getUser(req.session.userId ?? 0);
+    return res.status(StatusCodes.OK).send(instanceToPlain(userList));
+  }
+
   @httpGet("/:userId", sessionCheckMiddleware)
   public async getUser(req: Request, res: Response) {
     const userList = await this.userService.getUser(
