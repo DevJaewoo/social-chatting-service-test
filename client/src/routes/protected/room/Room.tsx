@@ -5,8 +5,8 @@ import { SocketContext } from "src/context/socketio";
 import { PublicRoomInfo, RoomNotice } from "src/socketConstants";
 import { currentUserInfoStore } from "src/stores/useCurrentUserInfo";
 import { publicRoomInfoStore } from "src/stores/usePublicRoomInfo";
+import RoomChat, { Chat, ChatType } from "src/components/RoomChat";
 import RoomUser from "./_RoomUser";
-import RoomChat, { Chat, ChatType } from "./_RoomChat";
 
 const Room: React.FC<{}> = () => {
   const { roomId } = useParams();
@@ -18,11 +18,6 @@ const Room: React.FC<{}> = () => {
   const navigate = useNavigate();
   const [chatting, setChatting] = useState<string>("");
   const [chatList, setChatList] = useState<Chat[]>([]);
-  // const [roomInfo, setRoomInfo] = useState<PublicRoomInfo>({
-  //   id: 0,
-  //   name: "",
-  //   users: [],
-  // });
 
   const onUserEnter = (notice: RoomNotice) => {
     if (
