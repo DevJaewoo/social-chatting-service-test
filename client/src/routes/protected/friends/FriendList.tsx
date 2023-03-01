@@ -1,11 +1,16 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FriendListItem, FriendListResponse } from "src/api/friendApi";
+import { SocketContext } from "src/context/socketio";
+import { directRoomInfoStore } from "src/stores/useDirectRoomInfo";
 import FriendItem from "./_FriendItem";
 
 const FriendList: React.FC<{}> = () => {
+  const navigate = useNavigate();
+  const socket = useContext(SocketContext);
   const [friendList, setFriendList] = useState<FriendListItem[]>([]);
+  const { updateDirectRoomInfo } = directRoomInfoStore();
 
   useEffect(() => {
     const getFriendList = async () => {
@@ -20,6 +25,18 @@ const FriendList: React.FC<{}> = () => {
     getFriendList();
   }, []);
 
+  useEffect(() => {
+    socket.on("directEnter", (userId) => {
+      navigate(`/direct/${userId}`);
+    });
+
+    return () => {
+      socket.off("directEnter");
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, updateDirectRoomInfo]);
+
   const onDeleteClick = async (friend: FriendListItem) => {
     const response = await axios
       .delete(`/api/friends/${friend.id}`)
@@ -29,7 +46,9 @@ const FriendList: React.FC<{}> = () => {
     setFriendList(friendList.filter((f) => f.id !== friend.id));
   };
 
-  const onDirectClick = () => {};
+  const onDirectClick = (friend: FriendListItem) => {
+    socket.emit("directEnter", friend.id);
+  };
 
   return (
     <div className="flex flex-col w-full items-center">
