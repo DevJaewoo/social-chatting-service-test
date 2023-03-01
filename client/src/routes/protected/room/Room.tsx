@@ -4,39 +4,44 @@ import { Button, TextInput } from "@mantine/core";
 import { SocketContext } from "src/context/socketio";
 import { PublicRoomInfo, RoomNotice } from "src/socketConstants";
 import { currentUserInfoStore } from "src/stores/useCurrentUserInfo";
+import { publicRoomInfoStore } from "src/stores/usePublicRoomInfo";
 import RoomUser from "./_RoomUser";
 import RoomChat, { Chat, ChatType } from "./_RoomChat";
 
 const Room: React.FC<{}> = () => {
   const { roomId } = useParams();
   const { userInfo } = currentUserInfoStore();
+  const { publicRoomInfo, updatePublicRoomInfo, clearPublicRoomInfo } =
+    publicRoomInfoStore();
 
   const socket = useContext(SocketContext);
   const navigate = useNavigate();
   const [chatting, setChatting] = useState<string>("");
   const [chatList, setChatList] = useState<Chat[]>([]);
-  const [roomInfo, setRoomInfo] = useState<PublicRoomInfo>({
-    id: 0,
-    name: "",
-    users: [],
-  });
+  // const [roomInfo, setRoomInfo] = useState<PublicRoomInfo>({
+  //   id: 0,
+  //   name: "",
+  //   users: [],
+  // });
 
   const onUserEnter = (notice: RoomNotice) => {
-    setRoomInfo((_roomInfo) => {
-      if (_roomInfo.users.find((r) => r.id === notice.user.id))
-        return _roomInfo;
-      return {
-        ..._roomInfo,
-        users: [
-          ..._roomInfo.users,
-          {
-            id: notice.user.id,
-            name: notice.user.name,
-            nickname: notice.user.nickname,
-            createdAt: notice.user.createdAt,
-          },
-        ],
-      };
+    if (
+      !publicRoomInfo ||
+      publicRoomInfo.users.find((r) => r.id === notice.user.id)
+    )
+      return;
+
+    updatePublicRoomInfo({
+      ...publicRoomInfo,
+      users: [
+        ...publicRoomInfo.users,
+        {
+          id: notice.user.id,
+          name: notice.user.name,
+          nickname: notice.user.nickname,
+          createdAt: notice.user.createdAt,
+        },
+      ],
     });
 
     setChatList((_chatList) => [
@@ -49,11 +54,11 @@ const Room: React.FC<{}> = () => {
   };
 
   const onUserLeave = (notice: RoomNotice) => {
-    setRoomInfo((_roomInfo) => {
-      return {
-        ..._roomInfo,
-        users: _roomInfo.users.filter((u) => u.id !== notice.user.id),
-      };
+    if (!publicRoomInfo) return;
+
+    updatePublicRoomInfo({
+      ...publicRoomInfo,
+      users: publicRoomInfo.users.filter((u) => u.id !== notice.user.id),
     });
 
     setChatList((_chatList) => [
@@ -67,7 +72,7 @@ const Room: React.FC<{}> = () => {
 
   useEffect(() => {
     socket.on("roomInfo", (_roomInfo: PublicRoomInfo) => {
-      setRoomInfo(() => _roomInfo);
+      updatePublicRoomInfo(_roomInfo);
     });
 
     socket.emit("roomInfo", parseInt(roomId ?? "0", 10));
@@ -100,7 +105,9 @@ const Room: React.FC<{}> = () => {
       const newChat = {
         type:
           chat.userId === userInfo?.id ? ChatType.CHAT_ME : ChatType.CHAT_USER,
-        user: roomInfo.users.find((u) => u.id === chat.userId)?.nickname ?? "",
+        user:
+          publicRoomInfo?.users.find((u) => u.id === chat.userId)?.nickname ??
+          "",
         message: chat.message,
       };
 
@@ -113,10 +120,11 @@ const Room: React.FC<{}> = () => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate, roomInfo, userInfo]);
+  }, [navigate, publicRoomInfo, userInfo]);
 
   useEffect(() => {
     socket.on("roomLeave", () => {
+      clearPublicRoomInfo();
       navigate("/");
     });
 
@@ -138,7 +146,7 @@ const Room: React.FC<{}> = () => {
 
     setChatting("");
     socket.emit("roomChat", {
-      roomName: roomInfo.name,
+      roomName: publicRoomInfo?.name ?? "",
       message: chatting,
     });
   };
@@ -149,7 +157,7 @@ const Room: React.FC<{}> = () => {
         <div className="flex flex-1 flex-col justify-between w-full min-h-full p-4 shadow-lg rounded-lg">
           <div className="flex flex-col">
             <h2 className="w-full pb-2 border-b">
-              [번호: {roomInfo.id}] {roomInfo.name}
+              [번호: {publicRoomInfo?.id}] {publicRoomInfo?.name}
             </h2>
             <div className="w-full mt-4">
               {chatList.map((chat, index) => (
@@ -179,10 +187,10 @@ const Room: React.FC<{}> = () => {
         <div className="flex flex-col justify-between items-center min-h-full w-60 ml-10 p-4 shadow-lg rounded-lg">
           <div className="flex flex-col w-full">
             <h2 className="w-full pb-2 border-b">
-              현재 인원: {roomInfo.users.length}
+              현재 인원: {publicRoomInfo?.users.length ?? 0}
             </h2>
             <div className="w-full mt-2">
-              {roomInfo.users.map((_userInfo) => (
+              {publicRoomInfo?.users.map((_userInfo) => (
                 <RoomUser key={_userInfo.id} userInfo={_userInfo} />
               ))}
             </div>

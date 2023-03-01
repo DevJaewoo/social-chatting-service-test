@@ -1,4 +1,7 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { publicRoomInfoStore } from "src/stores/usePublicRoomInfo";
+import { SocketContext } from "src/context/socketio";
 import FriendPage from "./friends/FriendPage";
 import Room from "./room/Room";
 import RoomList from "./room/RoomList";
@@ -7,6 +10,17 @@ import Navigation from "./navigation/Navigation";
 import UsersPage from "./users/UsersPage";
 
 const ProtectedRoutes: React.FC<{}> = () => {
+  const socket = useContext(SocketContext);
+  const { pathname } = useLocation();
+  const { publicRoomInfo } = publicRoomInfoStore();
+
+  useEffect(() => {
+    if (publicRoomInfo && !pathname.startsWith("/rooms")) {
+      socket.emit("roomLeave");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publicRoomInfo, pathname]);
+
   return (
     <div className="w-full">
       <Navigation />
