@@ -79,10 +79,6 @@ const Room: React.FC<{}> = () => {
   }, [roomId]);
 
   useEffect(() => {
-    if (roomId === undefined) {
-      navigate("/");
-    }
-
     socket.on("roomLeave", () => {
       navigate("/");
     });
@@ -113,7 +109,9 @@ const Room: React.FC<{}> = () => {
       socket.off("roomNotice");
       socket.off("roomChat");
     };
-  }, [socket, navigate, roomId, roomInfo, userInfo]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, roomInfo, userInfo]);
 
   const onLeaveRoom = () => {
     socket.emit("roomLeave");

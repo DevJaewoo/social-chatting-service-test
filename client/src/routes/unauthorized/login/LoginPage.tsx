@@ -32,7 +32,9 @@ const LoginPage: React.FC<{}> = () => {
     };
 
     requestUserInfo();
-  }, [socket, updateUserInfo]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateUserInfo]);
 
   const requestLogin: MouseEventHandler = async (event) => {
     event.preventDefault();

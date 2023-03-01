@@ -38,18 +38,28 @@ const RoomList: React.FC<{}> = () => {
       setRoomList(_roomList);
     });
 
-    socket.on("roomEnter", (_roomInfo: PublicRoomInfo) => {
-      navigate(`/rooms/${_roomInfo.id}`);
-    });
-
     socket.emit("roomList");
 
     // unmount 시 listener 해제
     return () => {
       socket.off("roomList");
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    socket.on("roomEnter", (_roomInfo: PublicRoomInfo) => {
+      navigate(`/rooms/${_roomInfo.id}`);
+    });
+
+    // unmount 시 listener 해제
+    return () => {
       socket.off("roomEnter");
     };
-  }, [socket, navigate]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate]);
 
   const onRoomCreate: React.MouseEventHandler = (event) => {
     event.preventDefault();
