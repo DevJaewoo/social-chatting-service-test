@@ -91,12 +91,12 @@ const Room: React.FC<{}> = () => {
     return () => {
       socket.off("roomNotice");
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [onUserEnter, onUserLeave]);
 
   useEffect(() => {
     socket.on("roomChat", (chat) => {
+      console.log(publicRoomInfo, chat);
       const newChat = {
         type:
           chat.userId === userInfo?.id ? ChatType.CHAT_ME : ChatType.CHAT_USER,
