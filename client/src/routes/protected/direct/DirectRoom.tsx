@@ -61,7 +61,13 @@ const DirectRoom = () => {
       clearDirectRoomInfo();
       navigate("/friends");
     });
-  });
+
+    return () => {
+      socket.off("directLeave");
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, clearDirectRoomInfo]);
 
   const onLeaveRoom = () => {
     socket.emit("directLeave", directRoomInfo ?? 0);
