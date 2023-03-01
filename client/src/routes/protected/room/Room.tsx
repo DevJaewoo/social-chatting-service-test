@@ -96,7 +96,6 @@ const Room: React.FC<{}> = () => {
 
   useEffect(() => {
     socket.on("roomChat", (chat) => {
-      console.log(publicRoomInfo, chat);
       const newChat = {
         type:
           chat.userId === userInfo?.id ? ChatType.CHAT_ME : ChatType.CHAT_USER,
