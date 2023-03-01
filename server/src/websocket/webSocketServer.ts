@@ -3,6 +3,7 @@ import http from "http";
 import {
   ChatSocket,
   ClientEvent,
+  DirectChatRequest,
   InternalEvent,
   NoticeType,
   PublicRoomInfo,
@@ -13,6 +14,8 @@ import {
   ServerEvent,
   UserInfo,
 } from "./socketConstants.js";
+
+const randomString = Math.floor(Math.random() * 1000000000).toString();
 
 const webSocketServer = (httpServer: http.Server) => {
   const wsServer = new Server<
@@ -60,7 +63,7 @@ const webSocketServer = (httpServer: http.Server) => {
   };
 
   const getPublicRoomList = (): PublicRoomListInfo[] => {
-    console.log(publicRooms);
+    console.log(`Public Room List: ${publicRooms}`);
     return publicRooms.map((p) => {
       return {
         id: p.id,
@@ -139,8 +142,10 @@ const webSocketServer = (httpServer: http.Server) => {
    */
 
   wsServer.on("connection", (socket) => {
-    socket.onAny((event) =>
-      console.log(`Socket event(${socket.data}): ${JSON.stringify(event)}`)
+    socket.onAny((event, ...args) =>
+      console.log(
+        `Socket event(${socket.id}): ${event} ${JSON.stringify(args)}`
+      )
     );
 
     socket.on("login", (userInfo: UserInfo) => {
@@ -253,6 +258,60 @@ const webSocketServer = (httpServer: http.Server) => {
       };
 
       wsServer.in(room.name).emit("roomChat", response);
+    });
+
+    const getDirectRoomName = (id1: number, id2: number): string => {
+      if (id1 < id2) return `${randomString}-${id1}-${id2}`;
+      else return `${randomString}-${id2}-${id1}`;
+    };
+
+    socket.on("directEnter", (userId: number) => {
+      if (!validateUser(socket.data)) {
+        socket.emit("error", "인증되지 않은 사용자입니다.");
+        return;
+      }
+
+      if (socket.data.id === userId) {
+        socket.emit("error", "자신과 대화를 나눌 수 없습니다.");
+        return;
+      }
+
+      socket.join(getDirectRoomName(socket.data.id ?? 0, userId));
+      socket.emit("directEnter", userId);
+    });
+
+    socket.on("directChat", (chat: DirectChatRequest) => {
+      if (!validateUser(socket.data)) {
+        socket.emit("error", "인증되지 않은 사용자입니다.");
+        return;
+      }
+
+      if (socket.data.id === chat.userId) {
+        socket.emit("error", "자신과 대화를 나눌 수 없습니다.");
+        return;
+      }
+
+      wsServer
+        .in(getDirectRoomName(socket.data.id ?? 0, chat.userId))
+        .emit("directChat", {
+          userId: socket.data.id ?? 0,
+          message: chat.message,
+        });
+    });
+
+    socket.on("directLeave", (userId: number) => {
+      if (!validateUser(socket.data)) {
+        socket.emit("error", "인증되지 않은 사용자입니다.");
+        return;
+      }
+
+      if (socket.data.id === userId) {
+        socket.emit("error", "자신과 대화를 나눌 수 없습니다.");
+        return;
+      }
+
+      socket.leave(getDirectRoomName(socket.data.id ?? 0, userId));
+      socket.emit("directLeave", userId);
     });
 
     socket.on("disconnecting", () => {

@@ -26,6 +26,11 @@ export interface ClientEvent {
 
   // Chatting 관련
   roomChat: (chat: RoomChatRequest) => void;
+
+  // DM 관련
+  directEnter: (userId: number) => void;
+  directChat: (chat: DirectChatRequest) => void;
+  directLeave: (userId: number) => void;
 }
 
 export interface ServerEvent {
@@ -40,6 +45,11 @@ export interface ServerEvent {
   // Chatting 관련
   roomNotice: (notice: RoomNotice) => void;
   roomChat: (chat: RoomChatResponse) => void;
+
+  // DM 관련
+  directEnter: (userId: number) => void;
+  directChat: (chat: DirectChatResponse) => void;
+  directLeave: (userId: number) => void;
 }
 
 export interface InternalEvent {}
@@ -75,6 +85,16 @@ export interface RoomChatRequest {
 }
 
 export interface RoomChatResponse {
+  userId: number;
+  message: string;
+}
+
+export interface DirectChatRequest {
+  userId: number;
+  message: string;
+}
+
+export interface DirectChatResponse {
   userId: number;
   message: string;
 }
