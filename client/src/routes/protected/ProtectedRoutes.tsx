@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import FriendPage from "./friends/FriendPage";
-import MainPage from "./main/MainPage";
+import Room from "./room/Room";
+import RoomList from "./room/RoomList";
 import LogoutPage from "./navigation/LogoutPage";
 import Navigation from "./navigation/Navigation";
 import UsersPage from "./users/UsersPage";
@@ -11,7 +12,8 @@ const ProtectedRoutes: React.FC<{}> = () => {
       <Navigation />
       <div className="w-full mt-16">
         <Routes>
-          <Route path="/*" element={<MainPage />} />
+          <Route path="/" element={<RoomList />} />
+          <Route path="/rooms/:roomId" element={<Room />} />
           <Route path="/users/*" element={<UsersPage />} />
           <Route path="/friends/*" element={<FriendPage />} />
           <Route path="/logout" element={<LogoutPage />} />
