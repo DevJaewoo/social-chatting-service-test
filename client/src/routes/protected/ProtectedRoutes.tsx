@@ -14,11 +14,12 @@ import DirectRoom from "./direct/DirectRoom";
 const ProtectedRoutes: React.FC<{}> = () => {
   const socket = useContext(SocketContext);
   const { pathname } = useLocation();
-  const { publicRoomInfo } = publicRoomInfoStore();
-  const { directRoomInfo } = directRoomInfoStore();
+  const { publicRoomInfo, clearPublicRoomInfo } = publicRoomInfoStore();
+  const { directRoomInfo, clearDirectRoomInfo } = directRoomInfoStore();
 
   useEffect(() => {
     if (publicRoomInfo && !pathname.startsWith("/rooms")) {
+      clearPublicRoomInfo();
       socket.emit("roomLeave");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,6 +27,7 @@ const ProtectedRoutes: React.FC<{}> = () => {
 
   useEffect(() => {
     if (directRoomInfo && !pathname.startsWith("/direct")) {
+      clearDirectRoomInfo();
       socket.emit("directLeave", directRoomInfo);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
