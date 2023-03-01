@@ -69,7 +69,14 @@ const Room: React.FC<{}> = () => {
     socket.on("roomInfo", (_roomInfo: PublicRoomInfo) => {
       setRoomInfo(() => _roomInfo);
     });
-  }, [socket]);
+
+    socket.emit("roomInfo", parseInt(roomId ?? "0", 10));
+
+    return () => {
+      socket.off("roomInfo");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomId]);
 
   useEffect(() => {
     if (roomId === undefined) {
@@ -100,11 +107,8 @@ const Room: React.FC<{}> = () => {
       setChatList((_chatList) => [..._chatList, newChat]);
     });
 
-    socket.emit("roomInfo", parseInt(roomId ?? "0", 10));
-
     // unmount 시 listener 해제
     return () => {
-      socket.off("roomInfo");
       socket.off("roomLeave");
       socket.off("roomNotice");
       socket.off("roomChat");
