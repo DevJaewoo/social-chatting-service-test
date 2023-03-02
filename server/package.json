@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "tsc && node dist/app.js",
-    "build": "tsc -p .",
+    "build": "tsc -p . && copy package*.json dist",
     "dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typeorm": "typeorm-ts-node-commonjs"

@@ -12,7 +12,7 @@ import { requestLoggingMiddleware } from "./global/middlewares/requestLoggingMid
 import webSocketServer from "./websocket/webSocketServer.js";
 
 const __dirname = path.resolve();
-const FRONTEND_DIR = "/dist/build";
+const FRONTEND_DIR = "/build";
 
 // const app = express();
 const port = 5000;
