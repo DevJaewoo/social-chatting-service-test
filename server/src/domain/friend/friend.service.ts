@@ -53,7 +53,7 @@ export class FriendService {
 
     // 이미 친구요청을 보냈거나, 친구이거나, 상대방이 거절했을 때
     if (friend && friend.friendStatus !== FriendStatus.NONE) {
-      throw FriendErrorCode.INVALID_REQUEST;
+      throw FriendErrorCode.INVALID_ADD_REQUEST;
     }
 
     if (friend === null) {
