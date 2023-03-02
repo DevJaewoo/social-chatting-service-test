@@ -35,6 +35,9 @@ const initializeExpress = () => {
   });
 
   const app = server.build();
+  app.get("*", (_, res) => {
+    res.sendFile(path.join(__dirname, FRONTEND_DIR, "index.html"));
+  });
 
   const httpServer = http.createServer(app);
   webSocketServer(httpServer);
