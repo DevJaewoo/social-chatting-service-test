@@ -2,13 +2,13 @@ import "./dotenv.js";
 import express from "express";
 import path from "path";
 import http from "http";
-import { Server } from "socket.io";
 import { AppDataSource } from "./data-source.js";
 import { sessionConfigMiddleware } from "./global/middlewares/sessionConfigMiddleware.js";
 import { Container } from "inversify";
 import { InversifyExpressServer } from "inversify-express-utils";
 import { bindComponents } from "./domain/bindConfig.js";
 import { globalExceptionHandler } from "./global/middlewares/globalExceptionHandler.js";
+import { requestLoggingMiddleware } from "./global/middlewares/requestLoggingMiddleware.js";
 import webSocketServer from "./websocket/webSocketServer.js";
 
 const __dirname = path.resolve();
@@ -26,6 +26,7 @@ const initializeExpress = () => {
   server.setConfig((app) => {
     app.use(express.json());
     app.use(sessionConfigMiddleware());
+    app.use(requestLoggingMiddleware);
     app.use("/", express.static(path.join(__dirname, FRONTEND_DIR)));
   });
 
