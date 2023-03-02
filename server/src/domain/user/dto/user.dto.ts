@@ -10,6 +10,8 @@ export class UserResponseDto {
   @Exclude() private _followers: number;
   @Exclude() private _following: number;
 
+  @Exclude() private _createdAt: Date;
+
   private constructor() {}
 
   @Expose() public get id() {
@@ -36,6 +38,10 @@ export class UserResponseDto {
     return this._following;
   }
 
+  @Expose() public get createdAt() {
+    return this._createdAt;
+  }
+
   public static from(user: User): UserResponseDto {
     const userResponseDto = new UserResponseDto();
 
@@ -46,6 +52,8 @@ export class UserResponseDto {
     userResponseDto._friends = user.friends.length;
     userResponseDto._followers = user.followers.length;
     userResponseDto._following = user.followees.length;
+
+    userResponseDto._createdAt = user.createdAt;
 
     return userResponseDto;
   }
