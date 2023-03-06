@@ -11,4 +11,11 @@ export const DirectUserRepository = AppDataSource.getRepository(
       .andWhere("user2.userId = :id2", { id2 })
       .getOne();
   },
+
+  async findByUserIdAndDirectId(userId: number, directId: number) {
+    return this.createQueryBuilder("directUser")
+      .where("directUser.userId = :userId", { userId })
+      .andWhere("directUser.directId = :directId", { directId })
+      .getOne();
+  },
 });

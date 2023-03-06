@@ -20,4 +20,20 @@ export class DirectChat extends AutoIdEntity {
 
   @Column("varchar", { length: DIRECT_CONSTANT.MAX_MESSAGE_LENGTH })
   message: string;
+
+  private constructor() {
+    super();
+  }
+
+  public static create(
+    user: User,
+    direct: Direct,
+    message: string
+  ): DirectChat {
+    const directChat = new DirectChat();
+    directChat.user = user;
+    directChat.direct = direct;
+    directChat.message = message;
+    return directChat;
+  }
 }
