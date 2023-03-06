@@ -2,7 +2,7 @@ import { TextInput, Button } from "@mantine/core";
 import axios from "axios";
 import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { DirectChatList } from "src/api/directApi";
+import { DirectChat, DirectChatList } from "src/api/directApi";
 import RoomChat, { Chat, ChatType } from "src/components/RoomChat";
 import { SocketContext } from "src/context/socketio";
 import { currentUserInfoStore, UserInfo } from "src/stores/useCurrentUserInfo";
@@ -97,14 +97,23 @@ const DirectRoom = () => {
     socket.emit("directLeave", directRoomInfo?.friendId ?? 0);
   };
 
-  const onChatting: MouseEventHandler = (event) => {
+  const onChatting: MouseEventHandler = async (event) => {
     event.preventDefault();
     if (chatting.trim() === "") return;
+
+    const response = await axios
+      .post<DirectChat>("/api/directs", {
+        directId: directRoomInfo?.directId,
+        message: chatting,
+      })
+      .catch(() => {});
+
+    if (!response) return;
 
     setChatting("");
     socket.emit("directChat", {
       userId: parseInt(friendId ?? "0", 10),
-      message: chatting,
+      message: response.data.message,
     });
   };
 
