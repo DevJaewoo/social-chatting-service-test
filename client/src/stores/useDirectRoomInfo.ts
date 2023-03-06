@@ -1,14 +1,19 @@
 import { create } from "zustand";
 
+interface DirectRoomInfo {
+  directId: number;
+  friendId: number;
+}
+
 interface DirectRoomInfoStore {
-  directRoomInfo: number | undefined;
-  updateDirectRoomInfo: (state: number) => void;
+  directRoomInfo: DirectRoomInfo | undefined;
+  updateDirectRoomInfo: (state: DirectRoomInfo) => void;
   clearDirectRoomInfo: () => void;
 }
 
 const directRoomInfoStore = create<DirectRoomInfoStore>((set) => ({
   directRoomInfo: undefined,
-  updateDirectRoomInfo: (state: number) =>
+  updateDirectRoomInfo: (state: DirectRoomInfo) =>
     set(() => ({
       directRoomInfo: state,
     })),

@@ -2,13 +2,14 @@ import { TextInput, Button } from "@mantine/core";
 import axios from "axios";
 import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { DirectChatList } from "src/api/directApi";
 import RoomChat, { Chat, ChatType } from "src/components/RoomChat";
 import { SocketContext } from "src/context/socketio";
 import { currentUserInfoStore, UserInfo } from "src/stores/useCurrentUserInfo";
 import { directRoomInfoStore } from "src/stores/useDirectRoomInfo";
 
 const DirectRoom = () => {
-  const { userId } = useParams();
+  const { userId: friendId } = useParams();
   const { userInfo } = currentUserInfoStore();
   const { directRoomInfo, updateDirectRoomInfo, clearDirectRoomInfo } =
     directRoomInfoStore();
@@ -26,22 +27,45 @@ const DirectRoom = () => {
   const [chatList, setChatList] = useState<Chat[]>([]);
 
   useEffect(() => {
-    const getFriendInfo = async () => {
-      const response = await axios
-        .get<UserInfo>(`/api/users/${userId}`)
+    const getDirectRoomInfo = async () => {
+      const friend = await axios
+        .get<UserInfo>(`/api/users/${friendId}`)
         .catch(() => {});
 
-      if (!response) return;
-      setFriendInfo(response.data);
-      updateDirectRoomInfo(response.data.id);
+      if (!friend) return;
+      setFriendInfo(friend.data);
+
+      const direct = await axios
+        .get<DirectChatList>(`/api/directs/${friendId}`)
+        .catch(() => {});
+
+      if (!direct) return;
+      const chat = direct.data.directChatList.map((directChat) => {
+        const newChat: Chat = {
+          type:
+            directChat.userId === userInfo?.id
+              ? ChatType.CHAT_ME
+              : ChatType.CHAT_USER,
+          user: friend.data.nickname,
+          message: directChat.message,
+        };
+
+        return newChat;
+      });
+      setChatList(chat);
+
+      updateDirectRoomInfo({
+        friendId: friend.data.id,
+        directId: direct.data.directId,
+      });
     };
 
-    getFriendInfo();
-  }, [userId, updateDirectRoomInfo]);
+    getDirectRoomInfo();
+  }, [userInfo, friendId, updateDirectRoomInfo]);
 
   useEffect(() => {
     socket.on("directChat", (chat) => {
-      const newChat = {
+      const newChat: Chat = {
         type:
           chat.userId === userInfo?.id ? ChatType.CHAT_ME : ChatType.CHAT_USER,
         user: friendInfo.nickname,
@@ -70,7 +94,7 @@ const DirectRoom = () => {
   }, [navigate, clearDirectRoomInfo]);
 
   const onLeaveRoom = () => {
-    socket.emit("directLeave", directRoomInfo ?? 0);
+    socket.emit("directLeave", directRoomInfo?.friendId ?? 0);
   };
 
   const onChatting: MouseEventHandler = (event) => {
@@ -79,7 +103,7 @@ const DirectRoom = () => {
 
     setChatting("");
     socket.emit("directChat", {
-      userId: parseInt(userId ?? "0", 10),
+      userId: parseInt(friendId ?? "0", 10),
       message: chatting,
     });
   };

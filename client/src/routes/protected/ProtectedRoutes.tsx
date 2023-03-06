@@ -28,7 +28,7 @@ const ProtectedRoutes: React.FC<{}> = () => {
   useEffect(() => {
     if (directRoomInfo && !pathname.startsWith("/direct")) {
       clearDirectRoomInfo();
-      socket.emit("directLeave", directRoomInfo);
+      socket.emit("directLeave", directRoomInfo.friendId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [directRoomInfo, pathname]);
