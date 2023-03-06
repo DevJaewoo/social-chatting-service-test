@@ -3,4 +3,6 @@ export const TYPE = {
   UserController: Symbol("UserController"),
   FriendService: Symbol("FriendService"),
   FriendController: Symbol("FriendController"),
+  DirectService: Symbol("DirectService"),
+  DirectController: Symbol("DirectController"),
 } as const;
