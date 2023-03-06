@@ -1,4 +1,12 @@
-import { Entity, Column, Unique, OneToMany } from "typeorm";
+import {
+  Entity,
+  Column,
+  Unique,
+  OneToMany,
+  AfterInsert,
+  AfterLoad,
+  AfterUpdate,
+} from "typeorm";
 import bcrypt from "bcrypt";
 import { AutoIdEntity } from "../../abstract/auto-id-entity.js";
 import { USER_CONSTANT } from "../../../global/constants.js";
@@ -38,6 +46,16 @@ export class User extends AutoIdEntity {
 
   private constructor() {
     super();
+  }
+
+  @AfterLoad()
+  @AfterInsert()
+  @AfterUpdate()
+  async nullChecks() {
+    if (!this.directs) this.directs = [];
+    if (!this.followers) this.followers = [];
+    if (!this.followees) this.followees = [];
+    if (!this.friends) this.friends = [];
   }
 
   public static create = async (
