@@ -6,7 +6,7 @@ export const DirectChatRepository = AppDataSource.getRepository(
 ).extend({
   async findAllByDirectId(directId: number) {
     return this.createQueryBuilder("directChat")
-      .where("directChat.directId = :directID", { directId })
+      .where("directChat.directId = :directId", { directId })
       .getMany();
   },
 });
