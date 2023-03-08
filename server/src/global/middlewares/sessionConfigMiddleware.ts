@@ -25,7 +25,7 @@ export const sessionConfigMiddleware = () => {
   const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET || "secret",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: sessionStore,
     cookie: { maxAge: Number(process.env.SESSION_MAXAGE) || 36000000 },
   });

@@ -31,7 +31,12 @@ export class UserController {
 
   @httpPost("/logout", sessionCheckMiddleware)
   public async logout(req: Request, res: Response) {
-    await new Promise((resolve, _) => req.session.destroy(resolve));
+    await new Promise((resolve, _) =>
+      req.session.destroy((err) => {
+        res.clearCookie("connect.sid");
+        resolve(err);
+      })
+    );
     return res.status(StatusCodes.NO_CONTENT).send();
   }
 
